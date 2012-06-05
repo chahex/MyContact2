@@ -1,0 +1,488 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D60060A5157C3D9200547E26 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060A4157C3D9200547E26 /* UIKit.framework */; };
+		D60060A7157C3D9200547E26 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060A6157C3D9200547E26 /* Foundation.framework */; };
+		D60060A9157C3D9200547E26 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060A8157C3D9200547E26 /* CoreGraphics.framework */; };
+		D60060AB157C3D9200547E26 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060AA157C3D9200547E26 /* CoreData.framework */; };
+		D60060B1157C3D9200547E26 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D60060AF157C3D9200547E26 /* InfoPlist.strings */; };
+		D60060B3157C3D9200547E26 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060B2157C3D9200547E26 /* main.m */; };
+		D60060B7157C3D9200547E26 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060B6157C3D9200547E26 /* AppDelegate.m */; };
+		D60060BA157C3D9200547E26 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D60060B8157C3D9200547E26 /* MainStoryboard.storyboard */; };
+		D60060BD157C3D9200547E26 /* MyContact2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D60060BB157C3D9200547E26 /* MyContact2.xcdatamodeld */; };
+		D60060C0157C3D9200547E26 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060BF157C3D9200547E26 /* MasterViewController.m */; };
+		D60060C3157C3D9200547E26 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060C2157C3D9200547E26 /* DetailViewController.m */; };
+		D60060CB157C3D9200547E26 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060CA157C3D9200547E26 /* SenTestingKit.framework */; };
+		D60060CC157C3D9200547E26 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060A4157C3D9200547E26 /* UIKit.framework */; };
+		D60060CD157C3D9200547E26 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060A6157C3D9200547E26 /* Foundation.framework */; };
+		D60060CE157C3D9200547E26 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060AA157C3D9200547E26 /* CoreData.framework */; };
+		D60060D6157C3D9300547E26 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D60060D4157C3D9300547E26 /* InfoPlist.strings */; };
+		D60060D9157C3D9300547E26 /* MyContact2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060D8157C3D9300547E26 /* MyContact2Tests.m */; };
+		D60060E4157C5A8000547E26 /* ContactHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060E3157C5A8000547E26 /* ContactHelper.m */; };
+		D60060F0157D9F4B00547E26 /* NewContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060EE157D9F4B00547E26 /* NewContactViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D60060CF157C3D9200547E26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6006097157C3D9200547E26 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D600609F157C3D9200547E26;
+			remoteInfo = MyContact2;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D60060A0157C3D9200547E26 /* MyContact2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyContact2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D60060A4157C3D9200547E26 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D60060A6157C3D9200547E26 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D60060A8157C3D9200547E26 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		D60060AA157C3D9200547E26 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		D60060AE157C3D9200547E26 /* MyContact2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyContact2-Info.plist"; sourceTree = "<group>"; };
+		D60060B0157C3D9200547E26 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D60060B2157C3D9200547E26 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D60060B4157C3D9200547E26 /* MyContact2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MyContact2-Prefix.pch"; sourceTree = "<group>"; };
+		D60060B5157C3D9200547E26 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D60060B6157C3D9200547E26 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D60060B9157C3D9200547E26 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		D60060BC157C3D9200547E26 /* MyContact2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyContact2.xcdatamodel; sourceTree = "<group>"; };
+		D60060BE157C3D9200547E26 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
+		D60060BF157C3D9200547E26 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		D60060C1157C3D9200547E26 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		D60060C2157C3D9200547E26 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		D60060C9157C3D9200547E26 /* MyContact2Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContact2Tests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D60060CA157C3D9200547E26 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		D60060D3157C3D9300547E26 /* MyContact2Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyContact2Tests-Info.plist"; sourceTree = "<group>"; };
+		D60060D5157C3D9300547E26 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D60060D7157C3D9300547E26 /* MyContact2Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyContact2Tests.h; sourceTree = "<group>"; };
+		D60060D8157C3D9300547E26 /* MyContact2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyContact2Tests.m; sourceTree = "<group>"; };
+		D60060E2157C5A8000547E26 /* ContactHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactHelper.h; sourceTree = "<group>"; };
+		D60060E3157C5A8000547E26 /* ContactHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactHelper.m; sourceTree = "<group>"; };
+		D60060ED157D9F4A00547E26 /* NewContactViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewContactViewController.h; sourceTree = "<group>"; };
+		D60060EE157D9F4B00547E26 /* NewContactViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewContactViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D600609D157C3D9200547E26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D60060A5157C3D9200547E26 /* UIKit.framework in Frameworks */,
+				D60060A7157C3D9200547E26 /* Foundation.framework in Frameworks */,
+				D60060A9157C3D9200547E26 /* CoreGraphics.framework in Frameworks */,
+				D60060AB157C3D9200547E26 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D60060C5157C3D9200547E26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D60060CB157C3D9200547E26 /* SenTestingKit.framework in Frameworks */,
+				D60060CC157C3D9200547E26 /* UIKit.framework in Frameworks */,
+				D60060CD157C3D9200547E26 /* Foundation.framework in Frameworks */,
+				D60060CE157C3D9200547E26 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D6006095157C3D9200547E26 = {
+			isa = PBXGroup;
+			children = (
+				D60060AC157C3D9200547E26 /* MyContact2 */,
+				D60060D1157C3D9200547E26 /* MyContact2Tests */,
+				D60060A3157C3D9200547E26 /* Frameworks */,
+				D60060A1157C3D9200547E26 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D60060A1157C3D9200547E26 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D60060A0157C3D9200547E26 /* MyContact2.app */,
+				D60060C9157C3D9200547E26 /* MyContact2Tests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D60060A3157C3D9200547E26 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D60060A4157C3D9200547E26 /* UIKit.framework */,
+				D60060A6157C3D9200547E26 /* Foundation.framework */,
+				D60060A8157C3D9200547E26 /* CoreGraphics.framework */,
+				D60060AA157C3D9200547E26 /* CoreData.framework */,
+				D60060CA157C3D9200547E26 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D60060AC157C3D9200547E26 /* MyContact2 */ = {
+			isa = PBXGroup;
+			children = (
+				D60060B5157C3D9200547E26 /* AppDelegate.h */,
+				D60060B6157C3D9200547E26 /* AppDelegate.m */,
+				D60060B8157C3D9200547E26 /* MainStoryboard.storyboard */,
+				D60060BE157C3D9200547E26 /* MasterViewController.h */,
+				D60060BF157C3D9200547E26 /* MasterViewController.m */,
+				D60060C1157C3D9200547E26 /* DetailViewController.h */,
+				D60060C2157C3D9200547E26 /* DetailViewController.m */,
+				D60060BB157C3D9200547E26 /* MyContact2.xcdatamodeld */,
+				D60060AD157C3D9200547E26 /* Supporting Files */,
+				D60060E2157C5A8000547E26 /* ContactHelper.h */,
+				D60060E3157C5A8000547E26 /* ContactHelper.m */,
+				D60060ED157D9F4A00547E26 /* NewContactViewController.h */,
+				D60060EE157D9F4B00547E26 /* NewContactViewController.m */,
+			);
+			path = MyContact2;
+			sourceTree = "<group>";
+		};
+		D60060AD157C3D9200547E26 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D60060AE157C3D9200547E26 /* MyContact2-Info.plist */,
+				D60060AF157C3D9200547E26 /* InfoPlist.strings */,
+				D60060B2157C3D9200547E26 /* main.m */,
+				D60060B4157C3D9200547E26 /* MyContact2-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D60060D1157C3D9200547E26 /* MyContact2Tests */ = {
+			isa = PBXGroup;
+			children = (
+				D60060D7157C3D9300547E26 /* MyContact2Tests.h */,
+				D60060D8157C3D9300547E26 /* MyContact2Tests.m */,
+				D60060D2157C3D9300547E26 /* Supporting Files */,
+			);
+			path = MyContact2Tests;
+			sourceTree = "<group>";
+		};
+		D60060D2157C3D9300547E26 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D60060D3157C3D9300547E26 /* MyContact2Tests-Info.plist */,
+				D60060D4157C3D9300547E26 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D600609F157C3D9200547E26 /* MyContact2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D60060DC157C3D9300547E26 /* Build configuration list for PBXNativeTarget "MyContact2" */;
+			buildPhases = (
+				D600609C157C3D9200547E26 /* Sources */,
+				D600609D157C3D9200547E26 /* Frameworks */,
+				D600609E157C3D9200547E26 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MyContact2;
+			productName = MyContact2;
+			productReference = D60060A0157C3D9200547E26 /* MyContact2.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D60060C8157C3D9200547E26 /* MyContact2Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D60060DF157C3D9300547E26 /* Build configuration list for PBXNativeTarget "MyContact2Tests" */;
+			buildPhases = (
+				D60060C4157C3D9200547E26 /* Sources */,
+				D60060C5157C3D9200547E26 /* Frameworks */,
+				D60060C6157C3D9200547E26 /* Resources */,
+				D60060C7157C3D9200547E26 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D60060D0157C3D9200547E26 /* PBXTargetDependency */,
+			);
+			name = MyContact2Tests;
+			productName = MyContact2Tests;
+			productReference = D60060C9157C3D9200547E26 /* MyContact2Tests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D6006097157C3D9200547E26 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "Carnegie Mellon University";
+			};
+			buildConfigurationList = D600609A157C3D9200547E26 /* Build configuration list for PBXProject "MyContact2" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = D6006095157C3D9200547E26;
+			productRefGroup = D60060A1157C3D9200547E26 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D600609F157C3D9200547E26 /* MyContact2 */,
+				D60060C8157C3D9200547E26 /* MyContact2Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D600609E157C3D9200547E26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D60060B1157C3D9200547E26 /* InfoPlist.strings in Resources */,
+				D60060BA157C3D9200547E26 /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D60060C6157C3D9200547E26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D60060D6157C3D9300547E26 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D60060C7157C3D9200547E26 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D600609C157C3D9200547E26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D60060B3157C3D9200547E26 /* main.m in Sources */,
+				D60060B7157C3D9200547E26 /* AppDelegate.m in Sources */,
+				D60060BD157C3D9200547E26 /* MyContact2.xcdatamodeld in Sources */,
+				D60060C0157C3D9200547E26 /* MasterViewController.m in Sources */,
+				D60060C3157C3D9200547E26 /* DetailViewController.m in Sources */,
+				D60060E4157C5A8000547E26 /* ContactHelper.m in Sources */,
+				D60060F0157D9F4B00547E26 /* NewContactViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D60060C4157C3D9200547E26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D60060D9157C3D9300547E26 /* MyContact2Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D60060D0157C3D9200547E26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D600609F157C3D9200547E26 /* MyContact2 */;
+			targetProxy = D60060CF157C3D9200547E26 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D60060AF157C3D9200547E26 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D60060B0157C3D9200547E26 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		D60060B8157C3D9200547E26 /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D60060B9157C3D9200547E26 /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+		D60060D4157C3D9300547E26 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D60060D5157C3D9300547E26 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D60060DA157C3D9300547E26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		D60060DB157C3D9300547E26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D60060DD157C3D9300547E26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MyContact2/MyContact2-Prefix.pch";
+				INFOPLIST_FILE = "MyContact2/MyContact2-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		D60060DE157C3D9300547E26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MyContact2/MyContact2-Prefix.pch";
+				INFOPLIST_FILE = "MyContact2/MyContact2-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		D60060E0157C3D9300547E26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/MyContact2.app/MyContact2";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MyContact2/MyContact2-Prefix.pch";
+				INFOPLIST_FILE = "MyContact2Tests/MyContact2Tests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		D60060E1157C3D9300547E26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/MyContact2.app/MyContact2";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MyContact2/MyContact2-Prefix.pch";
+				INFOPLIST_FILE = "MyContact2Tests/MyContact2Tests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D600609A157C3D9200547E26 /* Build configuration list for PBXProject "MyContact2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D60060DA157C3D9300547E26 /* Debug */,
+				D60060DB157C3D9300547E26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D60060DC157C3D9300547E26 /* Build configuration list for PBXNativeTarget "MyContact2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D60060DD157C3D9300547E26 /* Debug */,
+				D60060DE157C3D9300547E26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D60060DF157C3D9300547E26 /* Build configuration list for PBXNativeTarget "MyContact2Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D60060E0157C3D9300547E26 /* Debug */,
+				D60060E1157C3D9300547E26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		D60060BB157C3D9200547E26 /* MyContact2.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D60060BC157C3D9200547E26 /* MyContact2.xcdatamodel */,
+			);
+			currentVersion = D60060BC157C3D9200547E26 /* MyContact2.xcdatamodel */;
+			path = MyContact2.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = D6006097157C3D9200547E26 /* Project object */;
+}
