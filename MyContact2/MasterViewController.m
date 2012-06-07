@@ -148,6 +148,7 @@ static NSString* _sortBy = @"lastName";
 
 #pragma mark - Fetched results controller
 
+
 - (NSFetchedResultsController *)fetchedResultsController
 {
     if (__fetchedResultsController != nil) {
@@ -160,7 +161,6 @@ static NSString* _sortBy = @"lastName";
     // Edit the entity name as appropriate.
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Contact" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
-    
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:50];

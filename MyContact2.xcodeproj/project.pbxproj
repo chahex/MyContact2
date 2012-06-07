@@ -15,7 +15,6 @@
 		D60060B3157C3D9200547E26 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060B2157C3D9200547E26 /* main.m */; };
 		D60060B7157C3D9200547E26 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060B6157C3D9200547E26 /* AppDelegate.m */; };
 		D60060BA157C3D9200547E26 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D60060B8157C3D9200547E26 /* MainStoryboard.storyboard */; };
-		D60060BD157C3D9200547E26 /* MyContact2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D60060BB157C3D9200547E26 /* MyContact2.xcdatamodeld */; };
 		D60060C0157C3D9200547E26 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060BF157C3D9200547E26 /* MasterViewController.m */; };
 		D60060C3157C3D9200547E26 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060C2157C3D9200547E26 /* DetailViewController.m */; };
 		D60060CB157C3D9200547E26 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D60060CA157C3D9200547E26 /* SenTestingKit.framework */; };
@@ -26,6 +25,8 @@
 		D60060D9157C3D9300547E26 /* MyContact2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060D8157C3D9300547E26 /* MyContact2Tests.m */; };
 		D60060E4157C5A8000547E26 /* ContactHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060E3157C5A8000547E26 /* ContactHelper.m */; };
 		D60060F0157D9F4B00547E26 /* NewContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060EE157D9F4B00547E26 /* NewContactViewController.m */; };
+		D6006101157EFC2900547E26 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = D6006100157EFC2900547E26 /* Contact.m */; };
+		D60061051580564300547E26 /* MyContact2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D60061031580564300547E26 /* MyContact2.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +52,6 @@
 		D60060B5157C3D9200547E26 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D60060B6157C3D9200547E26 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D60060B9157C3D9200547E26 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		D60060BC157C3D9200547E26 /* MyContact2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyContact2.xcdatamodel; sourceTree = "<group>"; };
 		D60060BE157C3D9200547E26 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
 		D60060BF157C3D9200547E26 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
 		D60060C1157C3D9200547E26 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
@@ -66,6 +66,9 @@
 		D60060E3157C5A8000547E26 /* ContactHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactHelper.m; sourceTree = "<group>"; };
 		D60060ED157D9F4A00547E26 /* NewContactViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewContactViewController.h; sourceTree = "<group>"; };
 		D60060EE157D9F4B00547E26 /* NewContactViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewContactViewController.m; sourceTree = "<group>"; };
+		D60060FF157EFC2900547E26 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
+		D6006100157EFC2900547E26 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
+		D60061041580564300547E26 /* MyContact2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyContact2.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +131,7 @@
 		D60060AC157C3D9200547E26 /* MyContact2 */ = {
 			isa = PBXGroup;
 			children = (
+				D60061031580564300547E26 /* MyContact2.xcdatamodeld */,
 				D60060B5157C3D9200547E26 /* AppDelegate.h */,
 				D60060B6157C3D9200547E26 /* AppDelegate.m */,
 				D60060B8157C3D9200547E26 /* MainStoryboard.storyboard */,
@@ -135,7 +139,8 @@
 				D60060BF157C3D9200547E26 /* MasterViewController.m */,
 				D60060C1157C3D9200547E26 /* DetailViewController.h */,
 				D60060C2157C3D9200547E26 /* DetailViewController.m */,
-				D60060BB157C3D9200547E26 /* MyContact2.xcdatamodeld */,
+				D60060FF157EFC2900547E26 /* Contact.h */,
+				D6006100157EFC2900547E26 /* Contact.m */,
 				D60060AD157C3D9200547E26 /* Supporting Files */,
 				D60060E2157C5A8000547E26 /* ContactHelper.h */,
 				D60060E3157C5A8000547E26 /* ContactHelper.m */,
@@ -284,11 +289,12 @@
 			files = (
 				D60060B3157C3D9200547E26 /* main.m in Sources */,
 				D60060B7157C3D9200547E26 /* AppDelegate.m in Sources */,
-				D60060BD157C3D9200547E26 /* MyContact2.xcdatamodeld in Sources */,
 				D60060C0157C3D9200547E26 /* MasterViewController.m in Sources */,
 				D60060C3157C3D9200547E26 /* DetailViewController.m in Sources */,
 				D60060E4157C5A8000547E26 /* ContactHelper.m in Sources */,
 				D60060F0157D9F4B00547E26 /* NewContactViewController.m in Sources */,
+				D6006101157EFC2900547E26 /* Contact.m in Sources */,
+				D60061051580564300547E26 /* MyContact2.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,12 +478,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		D60060BB157C3D9200547E26 /* MyContact2.xcdatamodeld */ = {
+		D60061031580564300547E26 /* MyContact2.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				D60060BC157C3D9200547E26 /* MyContact2.xcdatamodel */,
+				D60061041580564300547E26 /* MyContact2.xcdatamodel */,
 			);
-			currentVersion = D60060BC157C3D9200547E26 /* MyContact2.xcdatamodel */;
+			currentVersion = D60061041580564300547E26 /* MyContact2.xcdatamodel */;
 			path = MyContact2.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

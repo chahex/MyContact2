@@ -7,6 +7,7 @@
 //
 
 #import "DetailViewController.h"
+#import "AppDelegate.h"
 
 @interface DetailViewController ()
 - (void)configureView;
@@ -15,7 +16,11 @@
 @implementation DetailViewController
 
 @synthesize detailItem = _detailItem;
-@synthesize detailDescriptionLabel = _detailDescriptionLabel;
+@synthesize firstNameField = _firstNameField;
+@synthesize lastNameField = _lastNameField;
+@synthesize companyField = _companyField;
+@synthesize phoneField = _phoneField;
+@synthesize emailField = _emailField;
 
 #pragma mark - Managing the detail item
 
@@ -23,7 +28,6 @@
 {   
     if (_detailItem != newDetailItem) {
         _detailItem = newDetailItem;
-        
         // Update the view.
         [self configureView];
     }
@@ -32,9 +36,13 @@
 - (void)configureView
 {
     // Update the user interface for the detail item.
-
     if (self.detailItem) {
-        self.detailDescriptionLabel.text = [self.detailItem description];
+        NSManagedObject* mObject = self.detailItem;
+        self.firstNameField.text = [mObject valueForKey:@"firstName"];
+        self.lastNameField.text = [mObject valueForKey:@"lastName"];
+        self.companyField.text = [mObject valueForKey:@"company"];
+        self.phoneField.text = [mObject valueForKey:@"phone"];
+        self.emailField.text = [mObject valueForKey:@"email"];
     }
 }
 
@@ -55,6 +63,11 @@
 
 - (void)viewDidUnload
 {
+    [self setFirstNameField:nil];
+    [self setLastNameField:nil];
+    [self setCompanyField:nil];
+    [self setPhoneField:nil];
+    [self setEmailField:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -84,6 +97,34 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+}
+
+- (IBAction)deleteContact:(id)sender {
+    
+    NSManagedObjectContext *context = [(AppDelegate*)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSManagedObject *editedManagedObject = (NSManagedObject*)self.detailItem;
+    [context deleteObject:editedManagedObject];
+    NSLog(@"Deletion complete.");
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+
+- (IBAction)saveContact:(id)sender {
+    NSManagedObjectContext *context = [(AppDelegate*)[[UIApplication sharedApplication] delegate] managedObjectContext];
+    NSManagedObject* editedManagedObject = self.detailItem;
+    [editedManagedObject setValue:self.firstNameField.text forKey:@"firstName"];
+    [editedManagedObject setValue:self.lastNameField.text forKey:@"lastName"];
+    [editedManagedObject setValue:self.companyField.text forKey:@"company"];
+    [editedManagedObject setValue:self.phoneField.text forKey:@"phone"];
+    [editedManagedObject setValue:self.emailField.text forKey:@"email"];
+    NSError *error = nil;
+    if(![context save:&error])
+    {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    NSLog(@"Save complete:%@",self.detailItem);
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

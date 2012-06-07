@@ -7,11 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
 @interface DetailViewController : UIViewController
 
 @property (strong, nonatomic) id detailItem;
+@property (weak, nonatomic) IBOutlet UITextField *firstNameField;
+@property (weak, nonatomic) IBOutlet UITextField *lastNameField;
+@property (weak, nonatomic) IBOutlet UITextField *companyField;
+@property (weak, nonatomic) IBOutlet UITextField *phoneField;
+@property (weak, nonatomic) IBOutlet UITextField *emailField;
+- (IBAction)saveContact:(id)sender;
 
-@property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+// @property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+- (IBAction)deleteContact:(id)sender;
 
 @end
