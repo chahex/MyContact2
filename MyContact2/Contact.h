@@ -12,7 +12,7 @@
 #ifndef variable_const_sort_by
 #define variable_const_sort_by
 
-static const NSString* SORT_BY = @"firstName";
+static  NSString* const SORT_BY = @"firstName";
 
 #endif
 
@@ -28,5 +28,7 @@ static const NSString* SORT_BY = @"firstName";
 @property (nonatomic, retain) NSDate * timeStamp;
 @property (nonatomic, retain) NSString * displayName;
 @property (nonatomic, retain) NSString * displayNameInitial;
+
++ (NSString *)sortKey;
 
 @end

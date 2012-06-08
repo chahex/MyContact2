@@ -96,7 +96,6 @@ static NSString* _sortBy = @"firstName";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
@@ -143,19 +142,17 @@ static NSString* _sortBy = @"firstName";
     return [self.fetchedResultsController sectionIndexTitles];
 }
 
--(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    NSArray* sectionIndexTitles = [self.fetchedResultsController sectionIndexTitles];
-    NSInteger sectionCount = [sectionIndexTitles count];
-    NSInteger sectionIndex = 0;
-    if (section>=sectionCount) {
-        sectionIndex = section-1;
-    }else
-    {
-        sectionIndex = section;   
-    }
-    return [sectionIndexTitles objectAtIndex:sectionIndex];
+
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    return [self.fetchedResultsController sectionForSectionIndexTitle:title atIndex:index];
 }
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+    return [sectionInfo name];
+}
+
+
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -201,7 +198,7 @@ static NSString* _sortBy = @"firstName";
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"displayName" cacheName:@"Master"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"displayNameInitial" cacheName:@"Master"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
@@ -215,6 +212,8 @@ static NSString* _sortBy = @"firstName";
 	    NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
 	    abort();
 	}
+    
+    NSLog(@"FRC: %@", [aFetchedResultsController sections]);
     
     return __fetchedResultsController;
 }    
