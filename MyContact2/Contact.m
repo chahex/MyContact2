@@ -2,7 +2,7 @@
 //  Contact.m
 //  MyContact2
 //
-//  Created by Xinkai HE on 6/5/12.
+//  Created by VMware Inc. on 6/8/12.
 //  Copyright (c) 2012 Carnegie Mellon University. All rights reserved.
 //
 
@@ -17,34 +17,21 @@
 @dynamic lastName;
 @dynamic phone;
 @dynamic timeStamp;
-
-static NSString* SORT_BY = @"firstName";
-static NSInteger FIRST_LAST_STYLE = 0;
-static NSInteger LAST_FIRST_STYLE = 1;
+@dynamic displayName;
+@dynamic displayNameInitial;
 
 
--(NSString*) getDescriptionByStyle:(NSInteger) style
+-(NSString*)displayName
+
 {
-    switch (style) {
-        case 0:
-            
-            break;
-        case 1:
-            
-            break;
-            
-        default:
-            break;
-    }
-}
-
-
-- (NSString*) contactDisplayName:(NSManagedObject*) object
-{
-    NSString* firstName = [object valueForKey:@"firstName"];
-    NSString* lastName = [object valueForKey:@"lastName"];
-    NSString* phone = [object valueForKey:@"phone"];
+    [self willAccessValueForKey:@"displayName"];
+    NSString* firstName = [self valueForKey:@"firstName"];
+    NSString* lastName = [self valueForKey:@"lastName"];
+    NSString* phone = [self valueForKey:@"phone"];
+    NSString* email = [self valueForKey:@"email"];
+    NSString* company = [self valueForKey:@"company"];
     NSString* result = @"";
+
     NSLog(@"[fn=%@,ln=%@,phone=%@]",firstName,lastName,phone);
     
     // If no firstName and lastName given, return phone number
@@ -55,25 +42,36 @@ static NSInteger LAST_FIRST_STYLE = 1;
             NSLog(@"Only phone number not nil.");
             return phone;
         }
-        NSLog(@"Only email available");
-        return [object valueForKey:@"email"];
+        if([email length]){
+            NSLog(@"Only email available");
+            return [self valueForKey:@"email"];
+        }
+        NSLog(@"return company");
+        return company;
         // assume one of them is not nil
     }
-    
     
     if([SORT_BY isEqualToString:@"firstName"])
     {
         result = [result stringByAppendingFormat:@"%@ %@",firstName, lastName];
-        NSLog(@"Sort by firstName");
     }else
     {
         result = [result stringByAppendingFormat:@"%@, %@",lastName, firstName];
-        NSLog(@"Sort by lastName");
     }
+    NSLog(@"Sort by %@",SORT_BY);
     NSLog(@"Result:%@",result);
+    [self didAccessValueForKey:@"displayName"];
     return result;
     // else
     
+}
+
+-(NSString*)displayNameInitial
+{
+    [self willAccessValueForKey:@"displayNameInitial"];
+    NSString* result = [[self displayName] substringToIndex:1];
+    [self didAccessValueForKey:@"displayNameInitial"];
+    return result;
 }
 
 @end

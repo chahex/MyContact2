@@ -7,8 +7,8 @@
 //
 
 #import "MasterViewController.h"
-#import "Contact.h"
 #import "DetailViewController.h"
+#import "Contact.h"
 
 @interface MasterViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -85,11 +85,6 @@ static NSString* _sortBy = @"firstName";
     return [[self.fetchedResultsController sections] count];
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
-    
-   // return [self.fetchedResultsController sectionIndexTitles][section];
-    
-}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -190,15 +185,23 @@ static NSString* _sortBy = @"firstName";
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:50];
     
+    
+    
+    // Debug: log the entity description
+    NSLog(@"EntityDesc:%@",entity);
+    
+    
+    
+    
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:_sortBy ascending:YES];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:SORT_BY ascending:YES];
     NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:_sortBy cacheName:@"Master"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"displayName" cacheName:@"Master"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
@@ -309,14 +312,14 @@ static NSString* _sortBy = @"firstName";
     NSLog(@"Result:%@",result);
     return result;
     // else
-    
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    Contact* managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
 //    cell.textLabel.text = [[managedObject valueForKey:@"timeStamp"] description];
-    cell.textLabel.text = [self contactDisplayName:managedObject];
+    cell.textLabel.text = [managedObject valueForKey:@"displayName"];
     // TODO add one function to process for the 
 }
 

@@ -2,12 +2,19 @@
 //  Contact.h
 //  MyContact2
 //
-//  Created by Xinkai HE on 6/5/12.
+//  Created by VMware Inc. on 6/8/12.
 //  Copyright (c) 2012 Carnegie Mellon University. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+
+#ifndef variable_const_sort_by
+#define variable_const_sort_by
+
+static const NSString* SORT_BY = @"firstName";
+
+#endif
 
 
 @interface Contact : NSManagedObject
@@ -19,9 +26,7 @@
 @property (nonatomic, retain) NSString * lastName;
 @property (nonatomic, retain) NSString * phone;
 @property (nonatomic, retain) NSDate * timeStamp;
-@property (nonatomic, retain) NSString * description;
-@property (nonatomic, retain) NSString * indexInitial;
-
-- (NSString*) getDescription;
+@property (nonatomic, retain) NSString * displayName;
+@property (nonatomic, retain) NSString * displayNameInitial;
 
 @end
