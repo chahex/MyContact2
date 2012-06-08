@@ -17,7 +17,7 @@
 @implementation MasterViewController
 
 // Given the attribute to sort the contact
-static NSString* _sortBy = @"lastName";
+static NSString* _sortBy = @"firstName";
 
 @synthesize fetchedResultsController = __fetchedResultsController;
 @synthesize managedObjectContext = __managedObjectContext;
@@ -137,6 +137,25 @@ static NSString* _sortBy = @"lastName";
     return NO;
 }
 
+-(NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return [self.fetchedResultsController sectionIndexTitles];
+}
+
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSArray* sectionIndexTitles = [self.fetchedResultsController sectionIndexTitles];
+    NSInteger sectionCount = [sectionIndexTitles count];
+    NSInteger sectionIndex = 0;
+    if (section>=sectionCount) {
+        sectionIndex = section-1;
+    }else
+    {
+        sectionIndex = section;   
+    }
+    return [sectionIndexTitles objectAtIndex:sectionIndex];
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
@@ -166,14 +185,14 @@ static NSString* _sortBy = @"lastName";
     [fetchRequest setFetchBatchSize:50];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastName" ascending:YES];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:_sortBy ascending:YES];
     NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"Master"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:_sortBy cacheName:@"Master"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
