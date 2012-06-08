@@ -7,7 +7,7 @@
 //
 
 #import "MasterViewController.h"
-
+#import "Contact.h"
 #import "DetailViewController.h"
 
 @interface MasterViewController ()
@@ -141,6 +141,25 @@ static NSString* _sortBy = @"firstName";
 {
     // The table view should not be re-orderable.
     return NO;
+}
+
+-(NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return [self.fetchedResultsController sectionIndexTitles];
+}
+
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSArray* sectionIndexTitles = [self.fetchedResultsController sectionIndexTitles];
+    NSInteger sectionCount = [sectionIndexTitles count];
+    NSInteger sectionIndex = 0;
+    if (section>=sectionCount) {
+        sectionIndex = section-1;
+    }else
+    {
+        sectionIndex = section;   
+    }
+    return [sectionIndexTitles objectAtIndex:sectionIndex];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

@@ -20,6 +20,7 @@
 @property (nonatomic, retain) NSString * phone;
 @property (nonatomic, retain) NSDate * timeStamp;
 @property (nonatomic, retain) NSString * description;
+@property (nonatomic, retain) NSString * indexInitial;
 
 - (NSString*) getDescription;
 
