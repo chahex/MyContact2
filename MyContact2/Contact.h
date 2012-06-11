@@ -12,7 +12,7 @@
 #ifndef variable_const_sort_by
 #define variable_const_sort_by
 
-static  NSString* const SORT_BY = @"firstName";
+static  NSString* const SORT_BY = @"lastName";
 
 #endif
 
