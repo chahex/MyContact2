@@ -20,7 +20,7 @@
 @property (strong, readwrite) id<StringIndexable> value;
 @property (readwrite) char indexVal;
 
--(id)initWithStringIndexable:(id<StringIndexable>)indexable;
+-(id)initWithIndexVal:(char)indexVal;
 
 @end;
 
@@ -37,11 +37,11 @@ id<StringIndexable> _value;
 @synthesize value = _value;
 @synthesize indexVal = _indexVal;
 
--(id)initWithStringIndexable:(id<StringIndexable>)indexable
+-(id)initWithIndexVal:(char)indexVal
 {
     if(self=[super init])
     {
-        self.value = indexable;
+        self.indexVal = indexVal;
     }
     return self;
 }
@@ -54,7 +54,7 @@ id<StringIndexable> _value;
 
 @interface Trie()
 @property (readwrite) BOOL isCaseInsensitive;
-@property (readwrite) BOOL root;
+@property (readwrite, strong) Node* root;
 @end;
 
 
@@ -93,10 +93,8 @@ Node* _root;
     // if 
     if(!self.root)
     {
-        root = [[Node alloc] initWithStringIndexable:<#(id<StringIndexable>)#> 
+        self.root = [[Node alloc] initWithIndexVal:ch];
     }
-
-    
 }
 
 -(void)addAllIndexableValues:(NSArray<StringIndexable>*)indexables
