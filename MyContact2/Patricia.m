@@ -158,11 +158,26 @@ NSMutableArray<BaseNode> *_baseArr;
                         // old: area
                         if(i>=indexLength)
                         {
+                            NSInteger oldKey = [k_l characterAtIndex:i];
                             // add the new one
                             [self addLeafNodeAtNode:&p WithValue:stringIndexable withValueId:valueId];
                             // add the old one
-                            [self addLeafNodeAtNode:[((PatriciaNode*)p).baseArr objectAtIndex:<#(NSUInteger)#> WithValue:<#(NSObject<StringIndexable> *)#> withValueId:<#(NSInteger)#>
+                            [((PatriciaNode*)p).baseArr replaceObjectAtIndex:oldKey withObject:next];
+                            return;
                         }
+                        // the strings are like:
+                        // new: area
+                        // old: are
+                        if(i>=[k_l length])
+                        {
+                            NSInteger oldKey = [index characterAtIndex:i];
+                            // add the new one
+                            [self addLeafNodeAtNode:&p WithValue:stringIndexable withValueId:valueId];
+                            // add the old one
+                            [((PatriciaNode*)p).baseArr replaceObjectAtIndex:oldKey withObject:next];
+                            return;
+                        }
+
                         key=[self toIndexKeyVal:[index characterAtIndex:i]];
                     }while([k_l characterAtIndex:i]==key);
                     if(i==indexLength-1)
