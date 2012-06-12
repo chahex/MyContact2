@@ -185,11 +185,7 @@ static NSString* _sortBy = @"firstName";
     
     
     // Debug: log the entity description
-    NSLog(@"EntityDesc:%@",entity);
-    
-    
-    
-    
+    // NSLog(@"EntityDesc:%@",entity);
     // Edit the sort key as appropriate.
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:SORT_BY ascending:YES];
     NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
@@ -213,8 +209,12 @@ static NSString* _sortBy = @"firstName";
 	    abort();
 	}
     
-    NSLog(@"FRC: %@", [aFetchedResultsController sections]);
-    
+    // NSLog(@"FRC: %@", [aFetchedResultsController sections]);
+    NSLog(@"LN and initials of fetched Objects");
+    NSInteger count = 0;
+    for (Contact *c in aFetchedResultsController.fetchedObjects) {
+        NSLog(@"%d:%@:%@",count++,c.lastName,c.displayNameInitial);
+    }
     return __fetchedResultsController;
 }    
 
@@ -284,17 +284,17 @@ static NSString* _sortBy = @"firstName";
     NSString* lastName = [object valueForKey:@"lastName"];
     NSString* phone = [object valueForKey:@"phone"];
     NSString* result = @"";
-    NSLog(@"[fn=%@,ln=%@,phone=%@]",firstName,lastName,phone);
+    // NSLog(@"[fn=%@,ln=%@,phone=%@]",firstName,lastName,phone);
     
     // If no firstName and lastName given, return phone number
     // Works for nil too.
     if(![firstName length] && ![lastName length])
     {
         if([phone length]){
-            NSLog(@"Only phone number not nil.");
+            // NSLog(@"Only phone number not nil.");
             return phone;
         }
-        NSLog(@"Only email available");
+        // NSLog(@"Only email available");
         return [object valueForKey:@"email"];
         // assume one of them is not nil
     }
@@ -302,13 +302,13 @@ static NSString* _sortBy = @"firstName";
     if([_sortBy isEqualToString:@"firstName"])
     {
         result = [result stringByAppendingFormat:@"%@ %@",firstName, lastName];
-        NSLog(@"Sort by firstName");
+        // NSLog(@"Sort by firstName");
     }else
     {
         result = [result stringByAppendingFormat:@"%@, %@",lastName, firstName];
-        NSLog(@"Sort by lastName");
+        // NSLog(@"Sort by lastName");
     }
-    NSLog(@"Result:%@",result);
+    // NSLog(@"Result:%@",result);
     return result;
     // else
 }
