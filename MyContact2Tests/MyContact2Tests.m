@@ -26,7 +26,11 @@
 
 - (void)testExample
 {
-    STFail(@"Unit tests are not implemented yet in MyContact2Tests");
+    // STFail(@"Unit tests are not implemented yet in MyContact2Tests");
+    NSMutableArray* arr = [NSMutableArray arrayWithCapacity:3];
+    // arr = [arr initWithCapacity:3];
+    
+    STAssertEquals(3, [arr count], @"count is not 3");
 }
 
 @end
