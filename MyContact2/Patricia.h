@@ -17,6 +17,8 @@
 // like +, /, %, ^, except for -
 static NSInteger __initcapacity = 38;
 
+static NSInteger __sharpIndex = 0;
+
 static BOOL __ignoreCase = YES;
 
 // only chars within the range of a to z are processed.
@@ -29,7 +31,7 @@ static char __endinChar = 'z';
 @interface Patricia : NSObject
 
 -(void)addAllStringIndexables:(NSArray<StringIndexable>*)stringIndexables;
--(void)addStringIndexable:(NSObject<StringIndexable>*) stringIndexable;
+-(void)addStringIndexable:(NSObject<StringIndexable>*) stringIndexable withValueId:(NSInteger)valueId;
 -(NSObject<StringIndexable>*)removeAtStringIndex:(NSString*)index
                  withValueId:(NSInteger)valueId;
 -(NSArray<StringIndexable>*) suggestValues:(NSString*)index;

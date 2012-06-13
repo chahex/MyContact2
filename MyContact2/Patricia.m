@@ -6,51 +6,48 @@
 //  Copyright (c) 2012 Carnegie Mellon University. All rights reserved.
 //
 
+
 #import "Patricia.h"
 #import "StringIndexable.h"
 
 #pragma mark - Nodes definition
-
 #pragma mark - BaseNode definition
 
 @protocol BaseNode @end;
-@interface BaseNode : NSObject<BaseNode> 
-@property char keyVal;
+@interface BaseNode : NSObject<BaseNode>
 @end;
-
 @implementation BaseNode
-char _keyVal;
-@synthesize keyVal = _keyVal;
-
--(id)initWithKeyVal : (char)keyVal
-{
-    if(self = [super init])
-    {
-        self.keyVal = keyVal;
-    }
-    return self;
-}
 @end;
 
 #pragma mark - PatirciaNode definition
 
 @interface PatriciaNode : BaseNode
-@property (strong, readwrite) NSMutableArray<BaseNode>* baseArr;
+@property (readwrite) NSMutableArray<BaseNode>* baseArr;
 @end;
 
 @implementation PatriciaNode
 NSMutableArray<BaseNode> *_baseArr;
 @synthesize baseArr = _baseArr;
 
-
--(id)initWithKeyVal:(char)keyVal
+-(id)init
 {
-    if(self = [super initWithKeyVal:keyVal])
-    {
-        self.baseArr = [[NSMutableArray array] initWithCapacity:__initcapacity];
-    }
-    return self;
+	if(self = [super init])
+	{
+		self.baseArr = [NSMutableArray array];
+		for(NSInteger i = 0;i<__initcapacity;i++)
+		{
+			// initialize the array with null object
+			[self.baseArr addObject:[NSNull null]];
+		 }
+	}
+	return self;
 }
+
+-(NSString*) description
+{
+	return [NSString stringWithFormat:@"[array:%@]",self.baseArr];
+}
+
 @end;
 
 #pragma mark - LeafNode definition
@@ -74,6 +71,7 @@ NSMutableArray<BaseNode> *_baseArr;
 @synthesize value = _value;
 @synthesize valueId = _valueId;
 
+
 -(id)initWithValue:(NSObject<StringIndexable>*) value 
         andValueId:(NSInteger)valueId
 {
@@ -86,13 +84,18 @@ NSMutableArray<BaseNode> *_baseArr;
     return self;
 }
 
+-(NSString*) description
+{
+	return [NSString stringWithFormat:@"[value:%@,id:%d, next:%@]",self.value,self.valueId, self.nextSibling];
+}
+
 @end;
 
 
 #pragma mark - Patricia Tree implementation
 
 @interface Patricia()
-@property (strong) PatriciaNode* root;
+@property (retain) PatriciaNode* root;
 @end;
 
 @implementation Patricia
@@ -100,6 +103,15 @@ NSMutableArray<BaseNode> *_baseArr;
 PatriciaNode* _root;
 
 @synthesize root = _root;
+
+-(id) init
+{
+	if(self = [super init])
+	{
+		self.root = [[PatriciaNode alloc] init];
+	}
+	return self;
+}
 
 -(void)addAllStringIndexables:(NSArray<StringIndexable>*)stringIndexables
 {
@@ -112,95 +124,113 @@ PatriciaNode* _root;
 
 -(void)addStringIndexable:(NSObject<StringIndexable>*) stringIndexable withValueId:(NSInteger) valueId
 {
+    if(!__ignoreCase){
+        // not supported case sensitivie.
+        abort();
+    }
+    NSString* index = [stringIndexable.indexString lowercaseString];
+    NSInteger newIndexLength = [index length];
+    
+    if(!index) {        return;    }
+    
+    LeafNode* newLeaf = [[LeafNode alloc]initWithValue:stringIndexable andValueId:valueId];
+    PatriciaNode *p = self.root;
 
-    BaseNode *p = self.root;
-    NSString* index = stringIndexable.indexString;
-    NSInteger indexLength = [index length];
-    for(NSInteger i = 0;i<indexLength;i++)
+    for(NSInteger i = 0;;)
     {
-        NSInteger key = [self toIndexKeyVal:[index characterAtIndex:i]];
-        if([p isKindOfClass:[Patricia class]])
+        // when reached the end of word, just put it on the first node
+        if(i == newIndexLength)
         {
-             // when reached the end of word, just put it on the first node
-            if(i == indexLength-1)
-            {
-                LeafNode* ln = [((PatriciaNode*)p).baseArr objectAtIndex:0];
-                [self addLeafNodeAtNode:&ln WithValue:stringIndexable withValueId:valueId];
-                return;
-            }
-            BaseNode* next = [((PatriciaNode*)p).baseArr objectAtIndex:key];
-            // when could added to the leaf directly
-            if(!next) 
-            {
-                [self addLeafNodeAtNode:&next WithValue:stringIndexable withValueId:valueId];
-                return;
-            }
-            
-            // when next node is a PatriciaNode
-            if([next isKindOfClass:[PatriciaNode class]])
-            {
-                p = next;
-                continue;
-            }
-            
-            // when next node is a leafNode
-            if([next isKindOfClass:[LeafNode class]])
-            {
-                // duplicated indexes
-                if([((LeafNode*)next).value.indexString isEqualToString:index])
-                {
-                    [self addLeafNodeAtNode:&next WithValue:stringIndexable withValueId:valueId];
-                    return;
-                }
-                // if indexes not duplicated
-                NSString* k_l = ((LeafNode*)next).value.indexString;
-                do{
-                    PatriciaNode* nn = [PatriciaNode alloc];
-                    [((PatriciaNode*)p).baseArr replaceObjectAtIndex:i withObject:nn];
-                    p = nn;
-                    ++i;
-                    // the strings are like:
-                    // new: are
-                    // old: area
-                    if(i>=indexLength)
-                    {
-                        NSInteger oldKey = [k_l characterAtIndex:i];
-                        // add the new one
-                        [self addLeafNodeAtNode:&p WithValue:stringIndexable withValueId:valueId];
-                        // add the old one
-                        [((PatriciaNode*)p).baseArr replaceObjectAtIndex:oldKey withObject:next];
-                        return;
-                    }
-                    // the strings are like:
-                    // new: area
-                    // old: are
-                    if(i>=[k_l length])
-                    {
-                        NSInteger oldKey = [index characterAtIndex:i];
-                        // add the new one
-                        [self addLeafNodeAtNode:&p WithValue:stringIndexable withValueId:valueId];
-                        // add the old one
-                        [((PatriciaNode*)p).baseArr replaceObjectAtIndex:oldKey withObject:next];
-                        return;
-                    }
-                    
-                    key=[self toIndexKeyVal:[index characterAtIndex:i]];
-                }while([k_l characterAtIndex:i]==key);
-                if(i==indexLength-1)
-                {
-                    LeafNode* ln2 = [((PatriciaNode*)p).baseArr objectAtIndex:0];
-                    [self addLeafNodeAtNode:&ln2 WithValue:stringIndexable withValueId:valueId];
-                }
-                
-                    
-                
-
-                
-            }
-            
-            
-            
+            LeafNode* oldLeaf = [p.baseArr objectAtIndex:__sharpIndex];
+            // the oldLeaf pointer's value may be changed if it is nil.
+            [self insertLeafNodeAtNodePointer:&oldLeaf withNewLeaf:newLeaf];
+            [p.baseArr replaceObjectAtIndex:__sharpIndex withObject:oldLeaf];
+            return;
         }
+        NSInteger newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
+        
+        BaseNode* next = [p.baseArr objectAtIndex:newKey];
+        // when next is NSNull, could add the leaf directly
+        if([p.baseArr objectAtIndex:newKey] == [NSNull null])
+        {
+            [p.baseArr replaceObjectAtIndex:newKey withObject:newLeaf];
+            return;
+        }
+        
+        // when next node is a PatriciaNode
+        if([next isKindOfClass:[PatriciaNode class]])
+        {
+            p = (PatriciaNode*)next;
+            ++i;
+            continue;
+        }
+        
+        // when next node is a leafNode
+        LeafNode* oldLeaf = (LeafNode*) next;
+        // if indexes not duplicated
+        NSString* oldIndex = [oldLeaf.value.indexString lowercaseString];
+        NSInteger oldIndexLength = [oldIndex length];
+        NSInteger oldKey = 0;
+        // duplicated indexes
+        NSLog(@"oldi:%@,newi:%@",oldIndex,index);
+        if([oldIndex isEqualToString:index])
+        {
+            [self insertLeafNodeAtNodePointer:&oldLeaf withNewLeaf:newLeaf];
+            return;
+        }
+        
+        do{
+            PatriciaNode* tmpNode = [[PatriciaNode alloc] init];
+            [p.baseArr replaceObjectAtIndex:newKey withObject:tmpNode];
+            p = tmpNode;
+            ++i;
+            // if the strings are like:
+            // new: are
+            // old: area
+            if(i>=newIndexLength)
+            {
+                /*
+                // add the new one
+                [p.baseArr replaceObjectAtIndex:__sharpIndex withObject:newLeaf];
+                // add the old one
+                [p.baseArr replaceObjectAtIndex:oldKey withObject:oldLeaf];
+                return;
+                 */
+                newKey = __sharpIndex;
+            }else{
+                newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
+            }
+            
+            // the strings are like:
+            // new: area
+            // old: are
+            // now, p->are, so put area at p[a], and put are at p[#]
+            if(i>=oldIndexLength)
+            {
+                /*
+                // add the new one
+                [p.baseArr replaceObjectAtIndex:newKey withObject:newLeaf];
+                // add the old one
+                [p.baseArr replaceObjectAtIndex:__sharpIndex withObject:oldLeaf
+                 ];
+                 */
+                oldKey = __sharpIndex;
+            }else {
+                oldKey = newKey = [self getIndexKeyVal:[oldIndex characterAtIndex:i]];
+            }
+            
+        }while(oldKey == newKey);
+        
+        // the 3rd situation, strings should be like:
+        // new: aret*
+        // old: aref*
+        // p->are, so put aret at p[t], and put aref at p[f]
+        // i is pointing to t/f
+        
+        [p.baseArr replaceObjectAtIndex:newKey withObject:newLeaf];
+        [p.baseArr replaceObjectAtIndex:oldKey withObject:oldLeaf];
+        
+        return;
     }
     // set end of word marker to p
 }
@@ -211,7 +241,7 @@ PatriciaNode* _root;
 // a different approach
 
 -(void)addLeafNodeAtNode:(BaseNode**)baseNode
-               WithValue:(NSObject<StringIndexable>*) value
+               withValue:(NSObject<StringIndexable>*) value
              withValueId:(NSInteger)valueId
 {
     if(*baseNode){
@@ -225,19 +255,39 @@ PatriciaNode* _root;
     return;
 }
 
+// side effect: the pointer passed in may be pointed to a new LeafNode if it is originally Nil..
+// if it is not Nil, the newLeafNode will be attached to the siblings.
+
+-(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer
+               withNewLeaf:(LeafNode*) newLeafNode
+{
+
+    LeafNode* oldLeafNode = *oldLeafPointer;
+    if(oldLeafNode == Nil)
+    {
+        *oldLeafPointer = newLeafNode;
+        return;
+    }
+    // here strictly assume no loop, and no siblings means nil.
+    while(oldLeafNode.nextSibling!=Nil)
+        oldLeafNode = oldLeafNode.nextSibling;
+    oldLeafNode.nextSibling = newLeafNode;
+    return;
+}
+
 /**
  * @return the modified key value for the given key, the return value should be used as index in the patricia key,<br> the - should be ignored when processing if followed by number, for Name-1 = Name1, for Name&&1 = Name(cap)1
  */
--(NSInteger)toIndexKeyVal:(char)key
+-(NSInteger)getIndexKeyVal:(char)key
 {
     if(__ignoreCase)
     {
         // word character
         if(key<='z' && key>='a')
-            return key - 'a' + 1;
+            return key - 'a' + 1 + 10;
         // number character
         if(key<='9' && key>='0')
-            return key - '0' +1;
+            return key - '0' + 1;
         // just ignore the - when processing
         // if(key=='-')
         //    return 0;
@@ -253,6 +303,8 @@ PatriciaNode* _root;
 }
 -(NSArray<StringIndexable>*) suggestValues:(NSString*)index
 {
+    // go looking for the values there
+    // from the root
     return Nil;
 }
 -(BOOL)isEntry:(NSString*)index
@@ -265,4 +317,63 @@ PatriciaNode* _root;
     return YES;
 }
 
+-(NSString*) description
+{
+	return [NSString stringWithFormat:@"[root:%@]",self.root];
+}
+
 @end
+
+
+# pragma mark - Test Part:
+
+@interface StrIndexable : NSObject<StringIndexable>
+@property (retain) NSString* name;
+@end;
+
+@implementation StrIndexable
+NSString* _name;
+@synthesize name = _name;
+-(id)initWithName:(NSString*) name
+{
+	if(self = [super init])
+	{
+		self.name = name;
+	}
+	return self;
+}
+
+-(NSString*) indexString{
+	return self.name;
+}
+
+-(NSString*) description 
+{
+	return self.name;
+}
+
+@end;
+
+void testPatricia(){
+	Patricia* p = [[Patricia alloc] init];
+}
+
+int main(int argc, char *argv[]) {
+	StrIndexable* idx = [[StrIndexable alloc] initWithName:@"x"];
+	NSLog(@"idx:%@",idx);
+	Patricia* p = [[Patricia alloc] init];
+	[p addStringIndexable:idx withValueId:0];
+	[p addStringIndexable:idx withValueId:0];
+	idx = [[StrIndexable alloc] initWithName:@"Xd"];
+	[p addStringIndexable:idx withValueId:0];
+	idx = [[StrIndexable alloc] initWithName:@"Xm"];
+    [p addStringIndexable:idx withValueId:0];
+    [p addStringIndexable:idx withValueId:0];
+    NSArray* arr = [NSArray arrayWithObjects:@"a", @"ab", @"0",@"x@f",@"X$f2",@"x1", @"-", nil];
+    for(NSString* str in arr)
+    {
+        idx = [[StrIndexable alloc] initWithName:str];
+        [p addStringIndexable:idx withValueId:0];
+    }
+    NSLog(@"%@",p);
+}
