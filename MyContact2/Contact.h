@@ -29,6 +29,5 @@ static  NSString* const SORT_BY = @"lastName";
 @property (nonatomic, retain) NSString * displayName;
 @property (nonatomic, retain) NSString * displayNameInitial;
 
-+ (NSString *)sortKey;
 
 @end

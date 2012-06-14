@@ -240,7 +240,7 @@
 		D6006097157C3D9200547E26 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Carnegie Mellon University";
 			};
 			buildConfigurationList = D600609A157C3D9200547E26 /* Build configuration list for PBXProject "MyContact2" */;

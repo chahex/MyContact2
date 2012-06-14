@@ -67,30 +67,34 @@ NSMutableDictionary* _baseDict;
 @interface LeafNode : BaseNode
 // Used to store the next object with the same Index value
 @property LeafNode* nextSibling;
-@property NSObject<StringIndexable>* value;
+@property NSObject* value;
 // The unique id to identify the value if multiple exists.
 @property NSInteger valueId;
+@property NSString* indexString;
 @end;
 
 @implementation LeafNode
 {
     LeafNode* _nextSibling;
-    NSObject<StringIndexable>* _value;
+    NSObject* _value;
     NSInteger _valueId;
+    NSString* _indexString;
 }
 @synthesize nextSibling = _nextSibling;
 @synthesize value = _value;
 @synthesize valueId = _valueId;
+@synthesize indexString = _indexString;
 
-
--(id)initWithValue:(NSObject<StringIndexable>*) value 
+-(id)initWithValue:(NSObject*) value 
         andValueId:(NSInteger)valueId
+    andIndexString:indexString
 {
     if(self = [super init])
     {
         self.nextSibling = Nil;
         self.value = value;
         self.valueId = valueId;
+        self.indexString = indexString;
     }
     return self;
 }
@@ -101,7 +105,6 @@ NSMutableDictionary* _baseDict;
 }
 
 @end;
-
 
 #pragma mark - Patricia Tree implementation
 
@@ -135,30 +138,49 @@ NSInteger _size;
     }
 }
 
+-(void)addStringIndexable:(NSObject<StringIndexable>*) value
+              withValueId:(NSInteger) valueId
+{
+    NSString* index = value.indexString;
+    [self addValue:value withIndexString:index andValueId:valueId];
+}
+
 // the following methods are added on June 14 to improve flexibility
 // on how to index on the object
--(void)addObject:(NSObject*) object withIndexSelector:(SEL)indexSel
+-(void)addValue:(NSObject*)value 
+withIndexSelector:(SEL)indexSel 
+     andValueId:(NSInteger)valueId
 {
-    
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    NSString* index = [value performSelector:indexSel];
+    #pragma clang diagnostic pop
+    [self addValue:value withIndexString:index andValueId:valueId];
 }
 
--(void)addObjects:(NSArray*) objArray withIndexSelector:(SEL)indexSel;
+-(void)addValues:(NSArray*) objArray withIndexSelector:(SEL)indexSel;
 {
-    
+    NSInteger i = 0;
+    for(NSObject* value in objArray)
+    {
+        [self addValue:value withIndexSelector:indexSel andValueId:i++];
+    }
 }
 
--(void)addStringIndexable:(NSObject<StringIndexable>*) value withValueId:(NSInteger) valueId
+-(void)addValue:(NSObject*) value
+withIndexString:(NSString*) indexString 
+     andValueId:(NSInteger) valueId
 {
     if(!__ignoreCase){
         // not supported case sensitivie.
         abort();
     }
-    NSString* index = [value.indexString lowercaseString];
+    NSString* index = [indexString lowercaseString];
     NSInteger newIndexLength = [index length];
     
     if(!index) {        return;    }
     
-    LeafNode* newLeaf = [[LeafNode alloc]initWithValue:value andValueId:valueId];
+    LeafNode* newLeaf = [[LeafNode alloc]initWithValue:value andValueId:valueId andIndexString:indexString];
     PatriciaNode *p = self.root;
     
     // if no exceptions, the value is due to be inserted.
@@ -212,7 +234,7 @@ NSInteger _size;
         // when next node is a leafNode
         LeafNode* oldLeaf = (LeafNode*) next;
         // if indexes not duplicated
-        NSString* oldIndex = [oldLeaf.value.indexString lowercaseString];
+        NSString* oldIndex = [oldLeaf.indexString lowercaseString];
         NSInteger oldIndexLength = [oldIndex length];
         NSInteger oldKey = 0;
         // duplicated indexes
@@ -324,13 +346,13 @@ NSInteger _size;
     return __otherKey;
 }
 
--(NSObject<StringIndexable>*)removeAtStringIndex:(NSString*)index
+-(NSObject*)removeAtStringIndex:(NSString*)index
                                      withValueId:(NSInteger)valueId
 {
     return Nil;
 }
 
--(NSArray<StringIndexable>*) suggestValuesForIndex:(NSString*)index
+-(NSArray*) suggestValuesForIndex:(NSString*)index
 {
     // go looking for the values there
     // from the root
@@ -342,7 +364,7 @@ NSInteger _size;
     //      1. simpley iterate the key from __keyLowerBound to __keyUperBound.
     //      2. get all keys from the map, order the keys.
     // as for the interface of 
-    NSMutableArray<StringIndexable>* arr = [NSMutableArray arrayWithCapacity:self.size];
+    NSMutableArray* arr = [NSMutableArray arrayWithCapacity:self.size];
 
     [self suggestValuesForIndex:index
                      withOffset:0 
@@ -354,7 +376,7 @@ NSInteger _size;
 -(void) suggestValuesForIndex:(NSString*)index 
                    withOffset:(NSInteger)offset
                       AtPNode:(PatriciaNode*) root
-                   addToArray:(NSMutableArray<StringIndexable>*)arr
+                   addToArray:(NSMutableArray*)arr
 {
 
     NSInteger indexLength = [index length];
@@ -407,7 +429,7 @@ NSInteger _size;
 }
 
 // helper method that only add to the array when the array does not contain the object
--(void)addUniqueToArray:(NSMutableArray<StringIndexable>*)arr withValue:(NSObject<StringIndexable>*)value
+-(void)addUniqueToArray:(NSMutableArray*)arr withValue:(NSObject*)value
 {
     if(![arr containsObject:value])
     {
@@ -418,7 +440,7 @@ NSInteger _size;
 /**The range of this */
 
 -(void) findAllValuesAtPNode:(PatriciaNode*) root
-                 addToArray:(NSMutableArray<StringIndexable>*) arr
+                 addToArray:(NSMutableArray*) arr
 {
     NSInteger start = __keyLowerBound;
     NSInteger end = __keyUpperBound;
@@ -448,11 +470,6 @@ NSInteger _size;
     return NO;
 }
 
--(BOOL)testReturn
-{
-    return YES;
-}
-
 -(NSString*) description
 {
 	return [NSString stringWithFormat:@"[root:%@]",self.root];
@@ -460,7 +477,7 @@ NSInteger _size;
 
 @end
 
-
+/*
 # pragma mark - Test Part:
 
 @interface StrIndexable : NSObject<StringIndexable>
@@ -506,12 +523,12 @@ void testPatricia(){
     for(NSString* str in arr)
     {
         idx = [[StrIndexable alloc] initWithName:str];
-        [p addStringIndexable:idx withValueId:0];
+        [p addValue:idx withIndexSelector:@selector(indexString) andValueId:0];
     }
     NSLog(@"%@",p);
-	NSMutableArray<StringIndexable>* arr2 = [p suggestValuesForIndex:@"x"];
+	NSMutableArray* arr2 = [p suggestValuesForIndex:@"x"];
     NSLog(@"%@",arr2);
 }
 
 int main(int argc, char *argv[]) { testPatricia();}
-
+*/
