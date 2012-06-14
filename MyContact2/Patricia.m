@@ -135,18 +135,30 @@ NSInteger _size;
     }
 }
 
--(void)addStringIndexable:(NSObject<StringIndexable>*) stringIndexable withValueId:(NSInteger) valueId
+// the following methods are added on June 14 to improve flexibility
+// on how to index on the object
+-(void)addObject:(NSObject*) object withIndexSelector:(SEL)indexSel
+{
+    
+}
+
+-(void)addObjects:(NSArray*) objArray withIndexSelector:(SEL)indexSel;
+{
+    
+}
+
+-(void)addStringIndexable:(NSObject<StringIndexable>*) value withValueId:(NSInteger) valueId
 {
     if(!__ignoreCase){
         // not supported case sensitivie.
         abort();
     }
-    NSString* index = [stringIndexable.indexString lowercaseString];
+    NSString* index = [value.indexString lowercaseString];
     NSInteger newIndexLength = [index length];
     
     if(!index) {        return;    }
     
-    LeafNode* newLeaf = [[LeafNode alloc]initWithValue:stringIndexable andValueId:valueId];
+    LeafNode* newLeaf = [[LeafNode alloc]initWithValue:value andValueId:valueId];
     PatriciaNode *p = self.root;
     
     // if no exceptions, the value is due to be inserted.
@@ -266,34 +278,18 @@ NSInteger _size;
     // set end of word marker to p
 }
 
-// This method should only be used to add a leafNode to 
-// an existing LeafNode pointer, or a nil place
-// so if it is not a leaf node but a patricia node, should take
-// a different approach
-
--(void)addLeafNodeAtNode:(BaseNode**)baseNode
-               withValue:(NSObject<StringIndexable>*) value
-             withValueId:(NSInteger)valueId
-{
-    if(*baseNode){
-        LeafNode* p = (LeafNode*)*baseNode;
-        // here strictly assume no loop, and no siblings means nil.
-        while(p.nextSibling!=Nil)
-            p = p.nextSibling;
-        *baseNode = p;
-    }
-    *baseNode = [[LeafNode alloc] initWithValue:value andValueId:valueId];
-    return;
-}
-
 // side effect: the pointer passed in may be pointed to a new LeafNode if it is originally Nil..
 // if it is not Nil, the newLeafNode will be attached to the siblings.
+// if the value in the old leaf is equal to the value in the new leaf, simpley return without adding it.
 
 -(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer
                withNewLeaf:(LeafNode*) newLeafNode
 {
 
     LeafNode* oldLeafNode = *oldLeafPointer;
+    if([oldLeafNode.value isEqual:newLeafNode.value]){
+        return;
+    }
     if(oldLeafNode == Nil)
     {
         *oldLeafPointer = newLeafNode;
@@ -404,9 +400,18 @@ NSInteger _size;
         // when is a leafNode, just return the value on it.
         LeafNode* leafNode = (LeafNode*)curNode;
         do{
-            [arr addObject:leafNode.value];
+            [self addUniqueToArray:arr withValue:leafNode.value];
         }while((leafNode = leafNode.nextSibling));
         break;
+    }
+}
+
+// helper method that only add to the array when the array does not contain the object
+-(void)addUniqueToArray:(NSMutableArray<StringIndexable>*)arr withValue:(NSObject<StringIndexable>*)value
+{
+    if(![arr containsObject:value])
+    {
+        [arr addObject:value];
     }
 }
 
@@ -428,7 +433,7 @@ NSInteger _size;
             // when it is a leaf node.
             LeafNode* isLeafCurNode = (LeafNode*)curNode;
             do{
-                [arr addObject:isLeafCurNode.value];
+                [self addUniqueToArray:arr withValue:isLeafCurNode.value];
             }while((isLeafCurNode = isLeafCurNode.nextSibling)!=Nil);
         }else{
             // when it is a patricia node 

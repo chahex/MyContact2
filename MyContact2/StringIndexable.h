@@ -10,7 +10,6 @@
 
 @protocol StringIndexable <NSObject>
 
-
 @required
 
 -(NSString*)indexString;

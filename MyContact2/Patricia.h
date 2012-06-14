@@ -37,7 +37,11 @@ static BOOL __ignoreCase = YES;
 
 -(void)addAllStringIndexables:(NSArray<StringIndexable>*)stringIndexables;
 
--(void)addStringIndexable:(NSObject<StringIndexable>*) stringIndexable withValueId:(NSInteger)valueId;
+-(void)addStringIndexable:(NSObject<StringIndexable>*) value withValueId:(NSInteger)valueId;
+
+-(void)addObject:(NSObject*) object withIndexSelector:(SEL)indexSel;
+
+-(void)addObjects:(NSArray*) objArray withIndexSelector:(SEL)indexSel;
 
 -(NSObject<StringIndexable>*)removeAtStringIndex:(NSString*)index
                  withValueId:(NSInteger)valueId;
