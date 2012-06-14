@@ -245,16 +245,21 @@ withIndexString:(NSString*) indexString
             return;
         }
         
+        // since the slash should be ignored, actually need two pointers.
+        NSInteger oi = i;
+        NSInteger ni = i;
+        
         do{
-            NSLog(@"i:%d,oldidx:%@,newidx:%@,oldk:%d,newk:%d",i,oldIndex,index,oldKey,newKey);
+            // NSLog(@"(o:%d:%@:%d)/(n:%d:%@:%d)",oi, oldIndex,oldKey,ni,index,newKey);
             PatriciaNode* tmpNode = [[PatriciaNode alloc] init];
             [p setNodeAtKey:newKey withNode:tmpNode];
             p = tmpNode;
-            ++i;
+            ++oi;
+            ++ni;
             // if the strings are like:
             // new: are
             // old: area
-            if(i>=newIndexLength)
+            if(ni>=newIndexLength)
             {
                 /*
                 // add the new one
@@ -265,14 +270,33 @@ withIndexString:(NSString*) indexString
                  */
                 newKey = __sharpKey;
             }else{
-                newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
+                for(;;)
+                {
+                    newKey = [self getIndexKeyVal:[index characterAtIndex:ni]];
+                    // NSLog(@"%@ni:d",ni);
+                    if(newKey!=__slashKey)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        // NSLog(@"slash found in new key.");
+                        if(++ni>=newIndexLength)
+                        {
+                            // NSLog(@"new key set to other key.");
+                            newKey = __otherKey;
+                            break;
+                        }
+                    }
+                }
+                // NSLog(@"new key is:%d after loop.",newKey);
             }
             
             // the strings are like:
             // new: area
             // old: are
             // now, p->are, so put area at p[a], and put are at p[#]
-            if(i>=oldIndexLength)
+            if(oi>=oldIndexLength)
             {
                 /*
                 // add the new one
@@ -283,7 +307,25 @@ withIndexString:(NSString*) indexString
                  */
                 oldKey = __sharpKey;
             }else {
-                oldKey = [self getIndexKeyVal:[oldIndex characterAtIndex:i]];
+                for(;;)
+                {
+                    // NSLog(@"%@oi:d",oi);
+                    oldKey = [self getIndexKeyVal:[oldIndex characterAtIndex:oi]];;
+                    // NSLog(@"oldKey:%d",oldKey);
+                    if(oldKey!=__slashKey)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        if(++oi>=oldIndexLength)
+                        {
+                            oldKey = __otherKey;
+                            break;
+                        }
+                    }
+                }
+
             }
         }while(oldKey == newKey);
         
@@ -386,16 +428,15 @@ withIndexString:(NSString*) indexString
    
     
     
-    for(;curOffset<indexLength;)
+    for(;curOffset<indexLength;curOffset++)
     {
         if(!curNode)
             return;
         if([curNode isKindOfClass:[PatriciaNode class]])
         {
+            curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset]];
             if(curOffset<indexLength-1)
             {
-                curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset++]];
-                
                 // special treat on slash key, ignore it
                 if(curKey==__slashKey)
                 {
@@ -403,18 +444,19 @@ withIndexString:(NSString*) indexString
                 }
                 curNode = [((PatriciaNode*)curNode) nodeForKey:curKey];
                 continue;
-            }else{
+            }else if(curOffset==indexLength-1){
                 // curNode is patricia node, and the offset==indexLength-1
-                if(curKey==__slashKey)
+                // if not slashKey, just go to 
+                if(curKey!=__slashKey)
                 {
-                    curKey = __otherKey;
-                    
-                }else{
-                    curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset]];
+                    curNode = [((PatriciaNode*)curNode) nodeForKey:curKey];
                 }
-                curNode = [((PatriciaNode*)curNode) nodeForKey:curKey];
-                [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
-                break;
+                if([curNode isKindOfClass:[PatriciaNode class]])
+                {
+                    [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
+                    break;
+                }
+                // if the 
             }
         }
         
@@ -442,6 +484,9 @@ withIndexString:(NSString*) indexString
 -(void) findAllValuesAtPNode:(PatriciaNode*) root
                  addToArray:(NSMutableArray*) arr
 {
+    if(!root)
+        return;
+    
     NSInteger start = __keyLowerBound;
     NSInteger end = __keyUpperBound;
     
@@ -477,7 +522,7 @@ withIndexString:(NSString*) indexString
 
 @end
 
-/*
+
 # pragma mark - Test Part:
 
 @interface StrIndexable : NSObject<StringIndexable>
@@ -519,16 +564,16 @@ void testPatricia(){
 	idx = [[StrIndexable alloc] initWithName:@"Xm"];
     [p addStringIndexable:idx withValueId:0];
     [p addStringIndexable:idx withValueId:0];
-    NSArray* arr = [NSArray arrayWithObjects:@"a", @"ab", @"0",@"x@f",@"x-1",@"x-3",@"X$f2",@"x1",@"x-1",@"x-2",@"x2", @"-",@"x-a", nil];
+    NSArray* arr = [NSArray arrayWithObjects:@"a",@"xiao",@"xi-o", @"ab", @"0",@"x@f",@"x-1",@"x-3",@"X$f2",@"x1",@"x-1",@"x-2",@"x2", @"-",@"x-a", nil];
     for(NSString* str in arr)
     {
         idx = [[StrIndexable alloc] initWithName:str];
         [p addValue:idx withIndexSelector:@selector(indexString) andValueId:0];
     }
     NSLog(@"%@",p);
-	NSMutableArray* arr2 = [p suggestValuesForIndex:@"x"];
+	NSMutableArray* arr2 = [p suggestValuesForIndex:@"xi--"];
     NSLog(@"%@",arr2);
 }
 
 int main(int argc, char *argv[]) { testPatricia();}
-*/
+
