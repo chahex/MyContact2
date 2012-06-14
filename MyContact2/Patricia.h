@@ -19,6 +19,14 @@ static NSInteger __initCapacity = 38;
 
 static NSInteger __sharpKey = 0;
 
+static NSInteger __slashKey = -1;
+
+static NSInteger __otherKey = 37;
+
+static NSInteger __keyLowerBound = 0;
+
+static NSInteger __keyUpperBound = 37;
+
 static BOOL __ignoreCase = YES;
 
 #endif

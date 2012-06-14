@@ -166,12 +166,20 @@ NSInteger _size;
         }
 
         NSInteger newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
-        // meet with key that should be ignored, like -
-        // if(newKey==__sharpKey)
-        // {
-        //    ++i;
-        //    continue;
-        //}
+#line 122
+        // 
+        // meet with slash key, that should be ignored.
+        if(newKey==__slashKey)
+        {
+            if(i==newIndexLength-1)
+            {
+                newKey = __otherKey;
+            }
+            else{
+                ++i;
+                continue;
+            }
+         }
         
         BaseNode* next = [p nodeForKey:newKey];
         // when next is NSNull, could add the leaf directly
@@ -204,6 +212,7 @@ NSInteger _size;
         }
         
         do{
+            NSLog(@"i:%d,oldidx:%@,newidx:%@,oldk:%d,newk:%d",i,oldIndex,index,oldKey,newKey);
             PatriciaNode* tmpNode = [[PatriciaNode alloc] init];
             [p setNodeAtKey:newKey withNode:tmpNode];
             p = tmpNode;
@@ -240,7 +249,7 @@ NSInteger _size;
                  */
                 oldKey = __sharpKey;
             }else {
-                oldKey = newKey = [self getIndexKeyVal:[oldIndex characterAtIndex:i]];
+                oldKey = [self getIndexKeyVal:[oldIndex characterAtIndex:i]];
             }
         }while(oldKey == newKey);
         
@@ -298,6 +307,9 @@ NSInteger _size;
 }
 
 /**
+ * Notice, the return value should be consistent with the constants defined in the header file.
+ * 
+ *
  * @return the modified key value for the given key, the return value should be used as index in the patricia key,<br> the - should be ignored when processing if followed by number, for Name-1 = Name1, for Name&&1 = Name(cap)1
  */
 -(NSInteger)getIndexKeyVal:(char)key
@@ -310,10 +322,10 @@ NSInteger _size;
     if(key<='9' && key>='0')
         return key - '0' + 1;
     // just ignore the - when processing
-    //if(key=='-')
-    //    return __sharpKey;
+    if(key=='-')
+        return __slashKey;
     // otherwise treat as same thing.
-    return __initCapacity-1;
+    return __otherKey;
 }
 
 -(NSObject<StringIndexable>*)removeAtStringIndex:(NSString*)index
@@ -331,7 +343,7 @@ NSInteger _size;
     // the returned values should be ordered.
     
     // the order can be guranteed by two ways,
-    //      1. simpley iterate the key from 0 to __initCapacity-1.
+    //      1. simpley iterate the key from __keyLowerBound to __keyUperBound.
     //      2. get all keys from the map, order the keys.
     // as for the interface of 
     NSMutableArray<StringIndexable>* arr = [NSMutableArray arrayWithCapacity:self.size];
@@ -351,27 +363,43 @@ NSInteger _size;
 
     NSInteger indexLength = [index length];
     NSInteger curOffset = offset;
-    NSInteger curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset]];
-    BaseNode* curNode = [root nodeForKey:curKey];
+    NSInteger curKey = 0;
+    BaseNode* curNode = root;
+   
+    
     
     for(;curOffset<indexLength;)
     {
-
         if(!curNode)
             return;
         if([curNode isKindOfClass:[PatriciaNode class]])
         {
-            if(offset<indexLength-1)
+            if(curOffset<indexLength-1)
             {
-                curKey = [self getIndexKeyVal:[index characterAtIndex:++curOffset]];
+                curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset++]];
+                
+                // special treat on slash key, ignore it
+                if(curKey==__slashKey)
+                {
+                    continue;
+                }
                 curNode = [((PatriciaNode*)curNode) nodeForKey:curKey];
                 continue;
             }else{
                 // curNode is patricia node, and the offset==indexLength-1
+                if(curKey==__slashKey)
+                {
+                    curKey = __otherKey;
+                    
+                }else{
+                    curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset]];
+                }
+                curNode = [((PatriciaNode*)curNode) nodeForKey:curKey];
                 [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
                 break;
             }
         }
+        
         
         // when is a leafNode, just return the value on it.
         LeafNode* leafNode = (LeafNode*)curNode;
@@ -382,11 +410,13 @@ NSInteger _size;
     }
 }
 
+/**The range of this */
+
 -(void) findAllValuesAtPNode:(PatriciaNode*) root
                  addToArray:(NSMutableArray<StringIndexable>*) arr
 {
-    NSInteger start = 0;
-    NSInteger end = __initCapacity - 1;
+    NSInteger start = __keyLowerBound;
+    NSInteger end = __keyUpperBound;
     
     for(NSInteger i = start;i<=end;i++)
     {
@@ -467,7 +497,7 @@ void testPatricia(){
 	idx = [[StrIndexable alloc] initWithName:@"Xm"];
     [p addStringIndexable:idx withValueId:0];
     [p addStringIndexable:idx withValueId:0];
-    NSArray* arr = [NSArray arrayWithObjects:@"a", @"ab", @"0",@"x@f",@"x-3",@"X$f2",@"x1",@"x-1",@"x-2",@"x2", @"-", nil];
+    NSArray* arr = [NSArray arrayWithObjects:@"a", @"ab", @"0",@"x@f",@"x-1",@"x-3",@"X$f2",@"x1",@"x-1",@"x-2",@"x2", @"-",@"x-a", nil];
     for(NSString* str in arr)
     {
         idx = [[StrIndexable alloc] initWithName:str];
