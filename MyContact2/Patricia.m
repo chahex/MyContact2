@@ -154,6 +154,7 @@ NSInteger _size;
     
     for(NSInteger i = 0;;)
     {
+
         // when reached the end of word, just put it on the first node
         if(i == newIndexLength)
         {
@@ -163,14 +164,14 @@ NSInteger _size;
             [p setNodeAtKey:__sharpKey withNode:oldLeaf];
             return;
         }
+
         NSInteger newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
-        
         // meet with key that should be ignored, like -
-        if(newKey==__sharpKey)
-        {
-            ++i;
-            continue;
-        }
+        // if(newKey==__sharpKey)
+        // {
+        //    ++i;
+        //    continue;
+        //}
         
         BaseNode* next = [p nodeForKey:newKey];
         // when next is NSNull, could add the leaf directly
@@ -241,7 +242,6 @@ NSInteger _size;
             }else {
                 oldKey = newKey = [self getIndexKeyVal:[oldIndex characterAtIndex:i]];
             }
-            
         }while(oldKey == newKey);
         
         // the 3rd situation, strings should be like:
@@ -310,8 +310,8 @@ NSInteger _size;
     if(key<='9' && key>='0')
         return key - '0' + 1;
     // just ignore the - when processing
-    if(key=='-')
-        return __sharpKey;
+    //if(key=='-')
+    //    return __sharpKey;
     // otherwise treat as same thing.
     return __initCapacity-1;
 }
@@ -455,7 +455,7 @@ NSString* _name;
 
 @end;
 
-/*
+
 void testPatricia(){
     StrIndexable* idx = [[StrIndexable alloc] initWithName:@"x"];
 	NSLog(@"idx:%@",idx);
@@ -467,7 +467,7 @@ void testPatricia(){
 	idx = [[StrIndexable alloc] initWithName:@"Xm"];
     [p addStringIndexable:idx withValueId:0];
     [p addStringIndexable:idx withValueId:0];
-    NSArray* arr = [NSArray arrayWithObjects:@"a", @"ab", @"0",@"x@f",@"X$f2",@"x1", @"-", nil];
+    NSArray* arr = [NSArray arrayWithObjects:@"a", @"ab", @"0",@"x@f",@"x-3",@"X$f2",@"x1",@"x-1",@"x-2",@"x2", @"-", nil];
     for(NSString* str in arr)
     {
         idx = [[StrIndexable alloc] initWithName:str];
@@ -479,4 +479,4 @@ void testPatricia(){
 }
 
 int main(int argc, char *argv[]) { testPatricia();}
- */
+

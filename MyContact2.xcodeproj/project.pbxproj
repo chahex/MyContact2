@@ -28,7 +28,6 @@
 		D60061051580564300547E26 /* MyContact2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D60061031580564300547E26 /* MyContact2.xcdatamodeld */; };
 		E710460615878D210080FAF3 /* Patricia.m in Sources */ = {isa = PBXBuildFile; fileRef = E710460515878D210080FAF3 /* Patricia.m */; };
 		E73616E815823573007754D6 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = E73616E715823573007754D6 /* Contact.m */; };
-		E7A26A0015867B10006AA23B /* Trie.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A269FF15867B10006AA23B /* Trie.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,8 +72,6 @@
 		E710460515878D210080FAF3 /* Patricia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Patricia.m; sourceTree = "<group>"; };
 		E73616E615823573007754D6 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		E73616E715823573007754D6 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
-		E7A269FE15867B10006AA23B /* Trie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trie.h; sourceTree = "<group>"; };
-		E7A269FF15867B10006AA23B /* Trie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Trie.m; sourceTree = "<group>"; };
 		E7A26A0315868385006AA23B /* StringIndexable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringIndexable.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -191,8 +188,6 @@
 		E7A26A021586836A006AA23B /* TrieTest */ = {
 			isa = PBXGroup;
 			children = (
-				E7A269FE15867B10006AA23B /* Trie.h */,
-				E7A269FF15867B10006AA23B /* Trie.m */,
 				E7A26A0315868385006AA23B /* StringIndexable.h */,
 				E710460415878D210080FAF3 /* Patricia.h */,
 				E710460515878D210080FAF3 /* Patricia.m */,
@@ -315,7 +310,6 @@
 				D60060F0157D9F4B00547E26 /* NewContactViewController.m in Sources */,
 				D60061051580564300547E26 /* MyContact2.xcdatamodeld in Sources */,
 				E73616E815823573007754D6 /* Contact.m in Sources */,
-				E7A26A0015867B10006AA23B /* Trie.m in Sources */,
 				E710460615878D210080FAF3 /* Patricia.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
