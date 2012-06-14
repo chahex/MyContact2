@@ -22,30 +22,41 @@
 #pragma mark - PatirciaNode definition
 
 @interface PatriciaNode : BaseNode
-@property (readwrite) NSMutableArray<BaseNode>* baseArr;
+
+@property NSMutableDictionary* baseDict;
+
+-(BaseNode*) nodeForKey:(NSInteger)key;
+-(void) setNodeAtKey: (NSInteger)key 
+            withNode:(BaseNode*) node;
 @end;
 
 @implementation PatriciaNode
-NSMutableArray<BaseNode> *_baseArr;
-@synthesize baseArr = _baseArr;
+NSMutableDictionary* _baseDict;
+@synthesize baseDict = _baseDict;
 
 -(id)init
 {
 	if(self = [super init])
 	{
-		self.baseArr = [NSMutableArray array];
-		for(NSInteger i = 0;i<__initcapacity;i++)
-		{
-			// initialize the array with null object
-			[self.baseArr addObject:[NSNull null]];
-		 }
-	}
+        self.baseDict = [NSMutableDictionary dictionaryWithCapacity:__initCapacity];
+    }
 	return self;
+}
+
+-(BaseNode*) nodeForKey:(NSInteger)key
+{
+    return [self.baseDict objectForKey:[NSNumber numberWithInt: key]];
+}
+
+-(void) setNodeAtKey:(NSInteger)key
+            withNode:(BaseNode*)node
+{
+    [self.baseDict setObject:node forKey:[NSNumber numberWithInt:key]];
 }
 
 -(NSString*) description
 {
-	return [NSString stringWithFormat:@"[array:%@]",self.baseArr];
+	return [NSString stringWithFormat:@"PNode[%@]",self.baseDict];
 }
 
 @end;
@@ -86,7 +97,7 @@ NSMutableArray<BaseNode> *_baseArr;
 
 -(NSString*) description
 {
-	return [NSString stringWithFormat:@"[value:%@,id:%d, next:%@]",self.value,self.valueId, self.nextSibling];
+	return [NSString stringWithFormat:@"LNode[%@,id:%d, next:%@]",self.value,self.valueId, self.nextSibling];
 }
 
 @end;
@@ -101,7 +112,9 @@ NSMutableArray<BaseNode> *_baseArr;
 @implementation Patricia
 
 PatriciaNode* _root;
+NSInteger _size;
 
+@synthesize size = _size;
 @synthesize root = _root;
 
 -(id) init
@@ -135,25 +148,35 @@ PatriciaNode* _root;
     
     LeafNode* newLeaf = [[LeafNode alloc]initWithValue:stringIndexable andValueId:valueId];
     PatriciaNode *p = self.root;
-
+    
+    // if no exceptions, the value is due to be inserted.
+    ++self.size;
+    
     for(NSInteger i = 0;;)
     {
         // when reached the end of word, just put it on the first node
         if(i == newIndexLength)
         {
-            LeafNode* oldLeaf = [p.baseArr objectAtIndex:__sharpIndex];
+            LeafNode* oldLeaf = (LeafNode*)[p nodeForKey:__sharpKey];
             // the oldLeaf pointer's value may be changed if it is nil.
             [self insertLeafNodeAtNodePointer:&oldLeaf withNewLeaf:newLeaf];
-            [p.baseArr replaceObjectAtIndex:__sharpIndex withObject:oldLeaf];
+            [p setNodeAtKey:__sharpKey withNode:oldLeaf];
             return;
         }
         NSInteger newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
         
-        BaseNode* next = [p.baseArr objectAtIndex:newKey];
-        // when next is NSNull, could add the leaf directly
-        if([p.baseArr objectAtIndex:newKey] == [NSNull null])
+        // meet with key that should be ignored, like -
+        if(newKey==__sharpKey)
         {
-            [p.baseArr replaceObjectAtIndex:newKey withObject:newLeaf];
+            ++i;
+            continue;
+        }
+        
+        BaseNode* next = [p nodeForKey:newKey];
+        // when next is NSNull, could add the leaf directly
+        if(next == Nil)
+        {
+            [p setNodeAtKey:newKey withNode:newLeaf];
             return;
         }
         
@@ -172,7 +195,7 @@ PatriciaNode* _root;
         NSInteger oldIndexLength = [oldIndex length];
         NSInteger oldKey = 0;
         // duplicated indexes
-        NSLog(@"oldi:%@,newi:%@",oldIndex,index);
+        // NSLog(@"oldi:%@,newi:%@",oldIndex,index);
         if([oldIndex isEqualToString:index])
         {
             [self insertLeafNodeAtNodePointer:&oldLeaf withNewLeaf:newLeaf];
@@ -181,7 +204,7 @@ PatriciaNode* _root;
         
         do{
             PatriciaNode* tmpNode = [[PatriciaNode alloc] init];
-            [p.baseArr replaceObjectAtIndex:newKey withObject:tmpNode];
+            [p setNodeAtKey:newKey withNode:tmpNode];
             p = tmpNode;
             ++i;
             // if the strings are like:
@@ -196,7 +219,7 @@ PatriciaNode* _root;
                 [p.baseArr replaceObjectAtIndex:oldKey withObject:oldLeaf];
                 return;
                  */
-                newKey = __sharpIndex;
+                newKey = __sharpKey;
             }else{
                 newKey = [self getIndexKeyVal:[index characterAtIndex:i]];
             }
@@ -214,7 +237,7 @@ PatriciaNode* _root;
                 [p.baseArr replaceObjectAtIndex:__sharpIndex withObject:oldLeaf
                  ];
                  */
-                oldKey = __sharpIndex;
+                oldKey = __sharpKey;
             }else {
                 oldKey = newKey = [self getIndexKeyVal:[oldIndex characterAtIndex:i]];
             }
@@ -227,9 +250,8 @@ PatriciaNode* _root;
         // p->are, so put aret at p[t], and put aref at p[f]
         // i is pointing to t/f
         
-        [p.baseArr replaceObjectAtIndex:newKey withObject:newLeaf];
-        [p.baseArr replaceObjectAtIndex:oldKey withObject:oldLeaf];
-        
+        [p setNodeAtKey:newKey withNode:newLeaf];
+        [p setNodeAtKey:oldKey withNode:oldLeaf];
         return;
     }
     // set end of word marker to p
@@ -280,20 +302,18 @@ PatriciaNode* _root;
  */
 -(NSInteger)getIndexKeyVal:(char)key
 {
-    if(__ignoreCase)
-    {
-        // word character
-        if(key<='z' && key>='a')
-            return key - 'a' + 1 + 10;
-        // number character
-        if(key<='9' && key>='0')
-            return key - '0' + 1;
-        // just ignore the - when processing
-        // if(key=='-')
-        //    return 0;
-    }
+
+    // word character
+    if(key<='z' && key>='a')
+        return key - 'a' + 1 + 10;
+    // number character
+    if(key<='9' && key>='0')
+        return key - '0' + 1;
+    // just ignore the - when processing
+    if(key=='-')
+        return __sharpKey;
     // otherwise treat as same thing.
-    return __initcapacity-1;
+    return __initCapacity-1;
 }
 
 -(NSObject<StringIndexable>*)removeAtStringIndex:(NSString*)index
@@ -301,12 +321,93 @@ PatriciaNode* _root;
 {
     return Nil;
 }
--(NSArray<StringIndexable>*) suggestValues:(NSString*)index
+
+-(NSArray<StringIndexable>*) suggestValuesForIndex:(NSString*)index
 {
     // go looking for the values there
     // from the root
-    return Nil;
+    // if the node is Patricia Node, iterate through all the sub nodes, should use recursive call?
+    // if the node is leaf node, just return its stroe values
+    // the returned values should be ordered.
+    
+    // the order can be guranteed by two ways,
+    //      1. simpley iterate the key from 0 to __initCapacity-1.
+    //      2. get all keys from the map, order the keys.
+    // as for the interface of 
+    NSMutableArray<StringIndexable>* arr = [NSMutableArray arrayWithCapacity:self.size];
+
+    [self suggestValuesForIndex:index
+                     withOffset:0 
+                        AtPNode:self.root
+                     addToArray:arr];
+    return arr;
 }
+
+-(void) suggestValuesForIndex:(NSString*)index 
+                   withOffset:(NSInteger)offset
+                      AtPNode:(PatriciaNode*) root
+                   addToArray:(NSMutableArray<StringIndexable>*)arr
+{
+
+    NSInteger indexLength = [index length];
+    NSInteger curOffset = offset;
+    NSInteger curKey = [self getIndexKeyVal:[index characterAtIndex:curOffset]];
+    BaseNode* curNode = [root nodeForKey:curKey];
+    
+    for(;curOffset<indexLength;)
+    {
+
+        if(!curNode)
+            return;
+        if([curNode isKindOfClass:[PatriciaNode class]])
+        {
+            if(offset<indexLength-1)
+            {
+                curKey = [self getIndexKeyVal:[index characterAtIndex:++curOffset]];
+                curNode = [((PatriciaNode*)curNode) nodeForKey:curKey];
+                continue;
+            }else{
+                // curNode is patricia node, and the offset==indexLength-1
+                [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
+                break;
+            }
+        }
+        
+        // when is a leafNode, just return the value on it.
+        LeafNode* leafNode = (LeafNode*)curNode;
+        do{
+            [arr addObject:leafNode.value];
+        }while((leafNode = leafNode.nextSibling));
+        break;
+    }
+}
+
+-(void) findAllValuesAtPNode:(PatriciaNode*) root
+                 addToArray:(NSMutableArray<StringIndexable>*) arr
+{
+    NSInteger start = 0;
+    NSInteger end = __initCapacity - 1;
+    
+    for(NSInteger i = start;i<=end;i++)
+    {
+        BaseNode* curNode = [root nodeForKey:i];
+		if(!curNode)
+			continue;
+        if([curNode isKindOfClass:[LeafNode class]])
+        {
+            // when it is a leaf node.
+            LeafNode* isLeafCurNode = (LeafNode*)curNode;
+            do{
+                [arr addObject:isLeafCurNode.value];
+            }while((isLeafCurNode = isLeafCurNode.nextSibling)!=Nil);
+        }else{
+            // when it is a patricia node 
+            [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
+        }
+    }
+}
+
+
 -(BOOL)isEntry:(NSString*)index
 {
     return NO;
@@ -354,12 +455,9 @@ NSString* _name;
 
 @end;
 
+/*
 void testPatricia(){
-	Patricia* p = [[Patricia alloc] init];
-}
-
-int main(int argc, char *argv[]) {
-	StrIndexable* idx = [[StrIndexable alloc] initWithName:@"x"];
+    StrIndexable* idx = [[StrIndexable alloc] initWithName:@"x"];
 	NSLog(@"idx:%@",idx);
 	Patricia* p = [[Patricia alloc] init];
 	[p addStringIndexable:idx withValueId:0];
@@ -376,4 +474,9 @@ int main(int argc, char *argv[]) {
         [p addStringIndexable:idx withValueId:0];
     }
     NSLog(@"%@",p);
+	NSMutableArray<StringIndexable>* arr2 = [p suggestValuesForIndex:@"x"];
+    NSLog(@"%@",arr2);
 }
+
+int main(int argc, char *argv[]) { testPatricia();}
+ */
