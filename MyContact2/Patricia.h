@@ -52,10 +52,14 @@ andValueId:(NSInteger)valueId;
 -(void)addValues:(NSArray*) objArray
 withIndexSelector:(SEL)indexSel;
 
--(NSObject<StringIndexable>*)removeAtStringIndex:(NSString*)index 
+-(NSObject*)removeAtStringIndex:(NSString*)index 
                                      withValueId:(NSInteger)valueId;
 
--(NSArray<StringIndexable>*) suggestValuesForIndex:(NSString*)index;
+// iterate through the entire tree to remove a value,
+// remove the node only when isEqual returns true.
+-(NSObject*)removeValue:(NSObject*)value;
+
+-(NSArray*) suggestValuesForIndex:(NSString*)index;
 
 -(BOOL)isEntry:(NSString*)index;
 

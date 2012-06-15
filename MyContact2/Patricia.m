@@ -474,7 +474,6 @@ withIndexString:(NSString*) indexString
                     [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
                     break;
                 }
-                // if the 
             }
         }
         
@@ -539,6 +538,22 @@ withIndexString:(NSString*) indexString
 -(NSString*) description
 {
 	return [NSString stringWithFormat:@"[root:%@]",self.root];
+}
+
+-(void)touchEachLeafNodesAtRoot:(PatriciaNode*)root withSelector(SEL)sel
+{
+    
+}
+
+-(NSObject*)removeValue:(NSObject*)value
+{
+    PatriciaNode* node = self.root;
+    NSInteger begin = __keyLowerBound;
+    NSInteger end = __keyUpperBound;
+    for(NSInteger i = begin;i<=end;i++)
+    {
+        
+    }
 }
 
 @end
