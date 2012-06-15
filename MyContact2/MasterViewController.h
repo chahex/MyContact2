@@ -10,7 +10,15 @@
 
 #import <CoreData/CoreData.h>
 
+#import "Patricia.h"
+
 @interface MasterViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+@property (strong, nonatomic) IBOutlet UISearchDisplayController *searchDisplayController;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+
+@property (strong, nonatomic) Patricia* contactPatricia;
+@property (strong, nonatomic) NSArray* searchResults;
+
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;

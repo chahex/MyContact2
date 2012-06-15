@@ -3,7 +3,7 @@
     <entity name="Contact" representedClassName="Contact">
         <attribute name="company" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="displayName" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
-        <attribute name="displayNameInitial" optional="YES" transient="YES" attributeType="String" maxValueString="1" syncable="YES"/>
+        <attribute name="displayNameInitial" optional="YES" transient="YES" attributeType="String" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
@@ -11,6 +11,6 @@
         <attribute name="timeStamp" optional="YES" attributeType="Date"/>
     </entity>
     <elements>
-        <element name="Contact" positionX="-288" positionY="54" width="128" height="135"/>
+        <element name="Contact" positionX="-288" positionY="54" width="128" height="165"/>
     </elements>
 </model>

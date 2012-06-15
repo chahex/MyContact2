@@ -19,8 +19,17 @@
 // Given the attribute to sort the contact
 static NSString* _sortBy = @"firstName";
 
+UISearchDisplayController* _mySearchDisplayController;
+UISearchBar* _mySearchBar;
+
+@synthesize searchDisplayController = _mySearchDisplayController;
+@synthesize searchBar = _mySearchBar;
+
+@synthesize contactPatricia = _contactPatricia;
+
 @synthesize fetchedResultsController = __fetchedResultsController;
 @synthesize managedObjectContext = __managedObjectContext;
+@synthesize searchResults = _searchResults;
 
 - (void)awakeFromNib
 {
@@ -44,10 +53,17 @@ static NSString* _sortBy = @"firstName";
 
     // UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     // self.navigationItem.rightBarButtonItem = addButton;
+    
 }
 
 - (void)viewDidUnload
 {
+    [self setSearchDisplayController:nil];
+    [self setSearchBar:nil];
+    [self setSearchResults:nil];
+    [self setContactPatricia:nil];
+    [self setFetchedResultsController:nil];
+    [self setManagedObjectContext:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -88,17 +104,39 @@ static NSString* _sortBy = @"firstName";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];
+    NSInteger count = 0;
+    if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
+    {
+        count = [self.searchResults count];
+    }else {
+        id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+        count = [sectionInfo numberOfObjects];
+    }
+    return count;
 }
 
 // Customize the appearance of table view cells.
+// added on June 14 if branch for the searchResults table view.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    [self configureCell:cell atIndexPath:indexPath];
+    
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        // ???
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    
+    if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
+    {
+        cell.textLabel.text = ((Contact*)[self.searchResults objectAtIndex:indexPath.row]).displayName;
+    }else{
+        [self configureCell:cell atIndexPath:indexPath];
+    }
     return cell;
+    
 }
 
 /*
@@ -137,6 +175,7 @@ static NSString* _sortBy = @"firstName";
     return NO;
 }
 
+// section index title at right hand side
 -(NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
     return [self.fetchedResultsController sectionIndexTitles];
@@ -147,6 +186,7 @@ static NSString* _sortBy = @"firstName";
     return [self.fetchedResultsController sectionForSectionIndexTitle:title atIndex:index];
 }
 
+// section header title
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
     return [sectionInfo name];
@@ -182,8 +222,6 @@ static NSString* _sortBy = @"firstName";
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:50];
     
-    
-    
     // Debug: log the entity description
     // NSLog(@"EntityDesc:%@",entity);
     // Edit the sort key as appropriate.
@@ -210,13 +248,18 @@ static NSString* _sortBy = @"firstName";
 	}
     
     // NSLog(@"FRC: %@", [aFetchedResultsController sections]);
-    NSLog(@"LN and initials of fetched Objects");
-    NSInteger count = 0;
-    for (Contact *c in aFetchedResultsController.fetchedObjects) {
-        NSLog(@"%d:%@:%@",count++,c.lastName,c.displayNameInitial);
-    }
+    // NSLog(@"LN and initials of fetched Objects");
+    //  NSInteger count = 0;
+    //for (Contact *c in aFetchedResultsController.fetchedObjects) {
+    //      NSLog(@"%d:%@:%@",count++,c.lastName,c.displayNameInitial);
+    //}
+    
+    // set up for search too
+    // NSLog(@"%@",[__fetchedResultsController fetchedObjects]);
+
+    [self prepareContactPatricia];
     return __fetchedResultsController;
-}    
+}
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller
 {
@@ -241,6 +284,9 @@ static NSString* _sortBy = @"firstName";
        atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath
 {
+    // update Patricia
+    [self prepareContactPatricia];
+    
     UITableView *tableView = self.tableView;
     
     switch(type) {
@@ -278,41 +324,6 @@ static NSString* _sortBy = @"firstName";
 }
  */
 
-- (NSString*) contactDisplayName:(NSManagedObject*) object
-{
-    NSString* firstName = [object valueForKey:@"firstName"];
-    NSString* lastName = [object valueForKey:@"lastName"];
-    NSString* phone = [object valueForKey:@"phone"];
-    NSString* result = @"";
-    // NSLog(@"[fn=%@,ln=%@,phone=%@]",firstName,lastName,phone);
-    
-    // If no firstName and lastName given, return phone number
-    // Works for nil too.
-    if(![firstName length] && ![lastName length])
-    {
-        if([phone length]){
-            // NSLog(@"Only phone number not nil.");
-            return phone;
-        }
-        // NSLog(@"Only email available");
-        return [object valueForKey:@"email"];
-        // assume one of them is not nil
-    }
-    
-    if([_sortBy isEqualToString:@"firstName"])
-    {
-        result = [result stringByAppendingFormat:@"%@ %@",firstName, lastName];
-        // NSLog(@"Sort by firstName");
-    }else
-    {
-        result = [result stringByAppendingFormat:@"%@, %@",lastName, firstName];
-        // NSLog(@"Sort by lastName");
-    }
-    // NSLog(@"Result:%@",result);
-    return result;
-    // else
-}
-
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     Contact* managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
@@ -344,6 +355,39 @@ static NSString* _sortBy = @"firstName";
          */
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
+    }
+}
+
+#pragma mark - UISearchDisplayController delegate methods
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller 
+shouldReloadTableForSearchString:(NSString *)searchString
+{
+    self.searchResults = [self.contactPatricia suggestValuesForIndex:searchString];
+    return YES;
+}
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller 
+shouldReloadTableForSearchScope:(NSInteger)searchOption
+{
+    self.searchResults = [self.contactPatricia suggestValuesForIndex:[self.searchBar text]];
+    NSLog(@"result:%@",self.searchResults);
+    return YES;
+}
+
+-(Patricia*)contactPatricia
+{
+    // prepare for the search
+    if(_contactPatricia==nil){
+        _contactPatricia = [[Patricia alloc] init];
+    }
+    return _contactPatricia;
+}
+
+-(void)prepareContactPatricia
+{
+    SEL sels[] =  {@selector(displayName),@selector(firstName),@selector(lastName),@selector(company),@selector(phone),@selector(email),nil};
+    for(NSInteger i = 0;sels[++i]!=nil;){
+        [self.contactPatricia addValues:[__fetchedResultsController fetchedObjects] withIndexSelector:sels[i]];
     }
 }
 

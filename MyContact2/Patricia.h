@@ -15,19 +15,20 @@
 // a-z, 0-9, with an extra unit at 0 to contain leaf node
 // and the last unit represents all the other chars, 
 // like +, /, %, ^, except for -
-static NSInteger __initCapacity = 38;
 
-static NSInteger __sharpKey = 0;
+static NSInteger const __initCapacity = 38;
 
-static NSInteger __slashKey = -1;
+static NSInteger const __sharpKey = 0;
 
-static NSInteger __otherKey = 37;
+static NSInteger const __slashKey = -1;
 
-static NSInteger __keyLowerBound = 0;
+static NSInteger const __otherKey = 37;
 
-static NSInteger __keyUpperBound = 37;
+static NSInteger const __keyLowerBound = 0;
 
-static BOOL __ignoreCase = YES;
+static NSInteger const __keyUpperBound = 37;
+
+static BOOL const __ignoreCase = YES;
 
 #endif
 

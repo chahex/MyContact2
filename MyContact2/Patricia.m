@@ -412,7 +412,7 @@ withIndexString:(NSString*) indexString
                      withOffset:0 
                         AtPNode:self.root
                      addToArray:arr];
-    return arr;
+    return [NSArray arrayWithArray: arr];
 }
 
 -(void) suggestValuesForIndex:(NSString*)index 
@@ -473,6 +473,9 @@ withIndexString:(NSString*) indexString
 // helper method that only add to the array when the array does not contain the object
 -(void)addUniqueToArray:(NSMutableArray*)arr withValue:(NSObject*)value
 {
+    // guarantee the nil value not inserted into the array.
+    if(!value)
+        return;
     if(![arr containsObject:value])
     {
         [arr addObject:value];
@@ -551,7 +554,7 @@ NSString* _name;
 }
 
 @end;
-
+/**
 
 void testPatricia(){
     StrIndexable* idx = [[StrIndexable alloc] initWithName:@"x"];
@@ -576,4 +579,4 @@ void testPatricia(){
 }
 
 int main(int argc, char *argv[]) { testPatricia();}
-
+*/
