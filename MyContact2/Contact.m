@@ -23,7 +23,6 @@ static NSString* const SHARP = @"#";
 
 
 -(NSString*)displayName
-
 {
     [self willAccessValueForKey:@"displayName"];
     NSString* firstName = [self valueForKey:@"firstName"];
@@ -39,20 +38,29 @@ static NSString* const SHARP = @"#";
     // Works for nil too.
     if(![firstName length] && ![lastName length])
     {
-        if([phone length]){
+        if([company length])
+        {
+            // NSLog(@"return company");
+            result = company;
+        }
+        else if([phone length]){
             // NSLog(@"Only phone number not nil.");
             result = phone;
         }
         else if([email length]){
             // NSLog(@"Only email available");
             result = [self valueForKey:@"email"];
-        }else
-        // NSLog(@"return company");
-        result = company;
+        }
         // assume one of them is not nil
     }
+    else if(![firstName length]){
+        result = lastName;
+    }
+    else if(![lastName length]){
+        result = firstName;
+    }
     
-    if([SORT_BY isEqualToString:@"firstName"])
+    else if([SORT_BY isEqualToString:@"firstName"])
     {
         result = [result stringByAppendingFormat:@"%@ %@",firstName, lastName];
     }else
@@ -69,7 +77,7 @@ static NSString* const SHARP = @"#";
 
 -(NSString*)displayNameInitial
 {
-    NSLog(@"hello...");
+    // NSLog(@"hello...");
     NSString* result = nil;
     [self willAccessValueForKey:@"displayNameInitial"];
     if([self.displayName length]==0)
@@ -83,7 +91,7 @@ static NSString* const SHARP = @"#";
             result = SHARP;
         }
     }
-    NSLog(@"%@",result);
+    // NSLog(@"%@",result);
     [self didAccessValueForKey:@"displayNameInitial"];
     return result;
 }

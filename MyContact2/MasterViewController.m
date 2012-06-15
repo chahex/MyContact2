@@ -12,6 +12,7 @@
 
 @interface MasterViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)prepareContactPatricia;
 @end
 
 @implementation MasterViewController
@@ -98,6 +99,9 @@ UISearchBar* _mySearchBar;
 // Customize the number of sections in the table view.
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+        return 1;
+    }
     return [[self.fetchedResultsController sections] count];
 }
 
@@ -178,27 +182,63 @@ UISearchBar* _mySearchBar;
 // section index title at right hand side
 -(NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
+    if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
+    {
+        return nil;
+    }
     return [self.fetchedResultsController sectionIndexTitles];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
+    if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
+    {
+        return 0;
+    }    
     return [self.fetchedResultsController sectionForSectionIndexTitle:title atIndex:index];
 }
 
 // section header title
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
+    {
+        return nil;
+    }
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
     return [sectionInfo name];
 }
 
+// added june 14 to help the searchDisplayTableView to segue to the detail view
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
+    {
+        UITableViewCell* sender = [tableView cellForRowAtIndexPath:indexPath];
+        [self performSegueWithIdentifier:@"showDetail" sender:sender];
+    }
+    
+    // although no branch for the master's tableview, it is still able to
+    // perform the segue. So other mechanism exist for the segues.
+    
+}
 
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    //NSLog(@"segueSender:%@",[sender class]);
+    UITableViewCell* cell = (UITableViewCell*)sender;
+    UITableView* superTableView = (UITableView*)[cell superview];
+    //NSLog(@"superview:%@,equalto:%d",[cell superview],[[cell superview] isEqual:self.tableView]);
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        NSIndexPath *indexPath = [superTableView indexPathForSelectedRow];
+        NSManagedObject *selectedObject = nil;
+        if([superTableView isEqual:self.tableView]){
+            selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        }
+        else if([superTableView isEqual:self.searchDisplayController.searchResultsTableView]){
+            selectedObject = [self.searchResults objectAtIndex:indexPath.row];
+        }
+        
         [[segue destinationViewController] setDetailItem:selectedObject];
     }
 }
@@ -333,30 +373,7 @@ UISearchBar* _mySearchBar;
     // TODO add one function to process for the 
 }
 
-- (void)insertNewObject
-{
-    // Create a new instance of the entity managed by the fetched results controller.
-    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-    NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
-    
-    // If appropriate, configure the new managed object.
-    // Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.
-    [newManagedObject setValue:@"San" forKey:@"firstName"];
-    [newManagedObject setValue:@"Zhang" forKey:@"lastName"];
-    
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-         */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-}
+- (void)insertNewObject{/**<context, entity->name>:managedObj,save*/}
 
 #pragma mark - UISearchDisplayController delegate methods
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller 
@@ -373,6 +390,8 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
     NSLog(@"result:%@",self.searchResults);
     return YES;
 }
+
+#pragma mark - Contact Patricia Operations
 
 -(Patricia*)contactPatricia
 {

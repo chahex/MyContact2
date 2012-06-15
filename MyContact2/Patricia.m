@@ -23,7 +23,7 @@
 
 @interface PatriciaNode : BaseNode
 
-@property NSMutableDictionary* baseDict;
+@property (retain) NSMutableDictionary* baseDict;
 
 -(BaseNode*) nodeForKey:(NSInteger)key;
 -(void) setNodeAtKey: (NSInteger)key 
@@ -66,12 +66,13 @@ NSMutableDictionary* _baseDict;
 /** The leaf node stores the data */
 @interface LeafNode : BaseNode
 // Used to store the next object with the same Index value
-@property LeafNode* nextSibling;
-@property NSObject* value;
+@property (retain) LeafNode* nextSibling;
+@property (retain) NSObject* value;
 // The unique id to identify the value if multiple exists.
 @property NSInteger valueId;
-@property NSString* indexString;
+@property (retain) NSString* indexString;
 @end;
+
 
 @implementation LeafNode
 {
@@ -108,15 +109,26 @@ NSMutableDictionary* _baseDict;
 
 #pragma mark - Patricia Tree implementation
 
+
 @interface Patricia()
 @property (retain) PatriciaNode* root;
+-(NSInteger)getIndexKeyVal:(char)key;
+-(void) findAllValuesAtPNode:(PatriciaNode*) root
+                  addToArray:(NSMutableArray*) arr;
+-(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer
+                       withNewLeaf:(LeafNode*) newLeafNode;
+-(void)addUniqueToArray:(NSMutableArray*)arr withValue:(NSObject*)value;
+-(void) suggestValuesForIndex:(NSString*)index 
+                   withOffset:(NSInteger)offset
+                      AtPNode:(PatriciaNode*) root
+                   addToArray:(NSMutableArray*)arr;
+
+
 @end;
 
 @implementation Patricia
-
 PatriciaNode* _root;
 NSInteger _size;
-
 @synthesize size = _size;
 @synthesize root = _root;
 
@@ -250,7 +262,7 @@ withIndexString:(NSString*) indexString
         NSInteger ni = i;
         
         do{
-            // NSLog(@"(o:%d:%@:%d)/(n:%d:%@:%d)",oi, oldIndex,oldKey,ni,index,newKey);
+           //  NSLog(@"(o:%d:%@:%d)/(n:%d:%@:%d)",oi, oldIndex,oldKey,ni,index,newKey);
             PatriciaNode* tmpNode = [[PatriciaNode alloc] init];
             [p setNodeAtKey:newKey withNode:tmpNode];
             p = tmpNode;
@@ -327,6 +339,11 @@ withIndexString:(NSString*) indexString
                 }
 
             }
+        // like h-1 is old and h1 is new....
+        if(oi>=oldIndexLength&&ni>=newIndexLength)
+        {
+            break;
+        }
         }while(oldKey == newKey);
         
         // the 3rd situation, strings should be like:
@@ -346,8 +363,8 @@ withIndexString:(NSString*) indexString
 // if it is not Nil, the newLeafNode will be attached to the siblings.
 // if the value in the old leaf is equal to the value in the new leaf, simpley return without adding it.
 
--(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer
-               withNewLeaf:(LeafNode*) newLeafNode
+-(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer 
+                       withNewLeaf:(LeafNode*) newLeafNode
 {
 
     LeafNode* oldLeafNode = *oldLeafPointer;
@@ -421,13 +438,14 @@ withIndexString:(NSString*) indexString
                    addToArray:(NSMutableArray*)arr
 {
 
+    // lower case not supported.
+    if(!__ignoreCase)
+        abort();
+    index = [index lowercaseString];
     NSInteger indexLength = [index length];
     NSInteger curOffset = offset;
     NSInteger curKey = 0;
-    BaseNode* curNode = root;
-   
-    
-    
+    BaseNode* curNode = root;   
     for(;curOffset<indexLength;curOffset++)
     {
         if(!curNode)
