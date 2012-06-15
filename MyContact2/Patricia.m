@@ -13,34 +13,43 @@
 #pragma mark - Nodes definition
 #pragma mark - BaseNode definition
 
-@protocol BaseNode @end;
-@interface BaseNode : NSObject<BaseNode>
-@end;
-@implementation BaseNode
-@end;
+@interface BaseNode : NSObject@end;
+@implementation BaseNode @end;
 
 #pragma mark - PatirciaNode definition
 
 @interface PatriciaNode : BaseNode
-
-@property (retain) NSMutableDictionary* baseDict;
-
+{
+    NSMutableDictionary* _baseDict;
+}
+@property (retain, nonatomic) NSMutableDictionary* baseDict;
 -(BaseNode*) nodeForKey:(NSInteger)key;
 -(void) setNodeAtKey: (NSInteger)key 
             withNode:(BaseNode*) node;
 @end;
 
 @implementation PatriciaNode
-NSMutableDictionary* _baseDict;
+
 @synthesize baseDict = _baseDict;
 
--(id)init
+-(NSDictionary*)baseDict
 {
-	if(self = [super init])
-	{
-        self.baseDict = [NSMutableDictionary dictionaryWithCapacity:__initCapacity];
+    if(!_baseDict)
+    {
+        _baseDict = [NSMutableDictionary
+                     dictionaryWithCapacity:__initCapacity];
     }
-	return self;
+    return _baseDict;
+}
+
+-(void) setNodeAtKey:(NSInteger)key
+            withNode:(BaseNode*)node
+{
+    if(!node)
+    {
+        [self.baseDict setObject:nil forKey:[NSNumber numberWithInt:key]];
+    }
+    [self.baseDict setObject:node forKey:[NSNumber numberWithInt:key]];
 }
 
 -(BaseNode*) nodeForKey:(NSInteger)key
@@ -48,15 +57,14 @@ NSMutableDictionary* _baseDict;
     return [self.baseDict objectForKey:[NSNumber numberWithInt: key]];
 }
 
--(void) setNodeAtKey:(NSInteger)key
-            withNode:(BaseNode*)node
-{
-    [self.baseDict setObject:node forKey:[NSNumber numberWithInt:key]];
-}
-
 -(NSString*) description
 {
 	return [NSString stringWithFormat:@"PNode[%@]",self.baseDict];
+}
+
+-(void)dealloc
+{
+    _baseDict = nil;
 }
 
 @end;
@@ -65,25 +73,23 @@ NSMutableDictionary* _baseDict;
 
 /** The leaf node stores the data */
 @interface LeafNode : BaseNode
-// Used to store the next object with the same Index value
-@property (retain) LeafNode* nextSibling;
+{
+    NSObject* _value;
+    NSInteger _valueId;
+    LeafNode* _nextSibling;
+    NSString* _indexString;
+}
+@property NSInteger valueId;// The unique id to identify the value if multiple exists.
 @property (retain) NSObject* value;
-// The unique id to identify the value if multiple exists.
-@property NSInteger valueId;
+@property (retain) LeafNode* nextSibling;// Used to store the next object with the same Index value
 @property (retain) NSString* indexString;
 @end;
 
-
 @implementation LeafNode
-{
-    LeafNode* _nextSibling;
-    NSObject* _value;
-    NSInteger _valueId;
-    NSString* _indexString;
-}
-@synthesize nextSibling = _nextSibling;
+
 @synthesize value = _value;
 @synthesize valueId = _valueId;
+@synthesize nextSibling = _nextSibling;
 @synthesize indexString = _indexString;
 
 -(id)initWithValue:(NSObject*) value 
@@ -92,10 +98,10 @@ NSMutableDictionary* _baseDict;
 {
     if(self = [super init])
     {
-        self.nextSibling = Nil;
-        self.value = value;
-        self.valueId = valueId;
-        self.indexString = indexString;
+        _value = value;
+        _valueId = valueId;
+        _nextSibling = Nil;
+        _indexString = indexString;
     }
     return self;
 }
@@ -105,40 +111,61 @@ NSMutableDictionary* _baseDict;
 	return [NSString stringWithFormat:@"LNode[%@,id:%d, next:%@]",self.value,self.valueId, self.nextSibling];
 }
 
+-(void)dealloc
+{
+    _value = nil;
+    _nextSibling = nil;
+    _indexString = nil;
+}
+
 @end;
 
 #pragma mark - Patricia Tree implementation
 
 
 @interface Patricia()
-@property (retain) PatriciaNode* root;
+{
+    PatriciaNode* _root;
+}
+@property (retain, nonatomic) PatriciaNode* root;
+
 -(NSInteger)getIndexKeyVal:(char)key;
+
 -(void) findAllValuesAtPNode:(PatriciaNode*) root
                   addToArray:(NSMutableArray*) arr;
+
 -(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer
                        withNewLeaf:(LeafNode*) newLeafNode;
+
 -(void)addUniqueToArray:(NSMutableArray*)arr withValue:(NSObject*)value;
+
 -(void) suggestValuesForIndex:(NSString*)index 
                    withOffset:(NSInteger)offset
                       AtPNode:(PatriciaNode*) root
                    addToArray:(NSMutableArray*)arr;
 
+-(void)clearPatriciaNode:(PatriciaNode*)pNode;
+
+-(void)clearLeafNode:(LeafNode*)lNode;
 
 @end;
 
 @implementation Patricia
-PatriciaNode* _root;
-NSInteger _size;
 @synthesize size = _size;
 @synthesize root = _root;
 
--(id) init
+-(void)dealloc
 {
-	if(self = [super init])
-	{
-		self.root = [[PatriciaNode alloc] init];
-	}
-	return self;
+    _root = nil;
+}
+
+-(PatriciaNode*)root
+{
+    if(!_root)
+    {
+        _root = [[PatriciaNode alloc] init];
+    }
+    return _root;
 }
 
 -(void)addAllStringIndexables:(NSArray<StringIndexable>*)stringIndexables
@@ -540,25 +567,49 @@ withIndexString:(NSString*) indexString
 	return [NSString stringWithFormat:@"[root:%@]",self.root];
 }
 
--(void)touchEachLeafNodesAtRoot:(PatriciaNode*)root withSelector(SEL)sel
+-(void)clearLeafNode:(LeafNode*)lNode
 {
-    
-}
-
--(NSObject*)removeValue:(NSObject*)value
-{
-    PatriciaNode* node = self.root;
-    NSInteger begin = __keyLowerBound;
-    NSInteger end = __keyUpperBound;
-    for(NSInteger i = begin;i<=end;i++)
+    LeafNode* curNode = lNode;
+    while(curNode)
     {
-        
+        LeafNode* temp = curNode.nextSibling;
+        curNode.nextSibling = nil;
+        curNode.value = nil;
+        curNode.indexString = nil;
+        curNode = temp;
     }
 }
 
+-(void)clearPatriciaNode:(PatriciaNode*)pNode
+{
+    NSInteger begin = __keyLowerBound;
+    NSInteger end = __keyUpperBound + 1;
+    for(NSInteger i = begin ; i <= end ; i++)
+    {
+        BaseNode* childNode = [pNode nodeForKey:i];
+        if([childNode isKindOfClass:[PatriciaNode class]])
+        {
+            [self clearPatriciaNode:(PatriciaNode*)childNode];
+        }
+        else if([childNode isKindOfClass:[LeafNode class]])
+        {
+            [self clearLeafNode:(LeafNode*)childNode];
+        }
+    }
+}
+
+
+
+-(void)clear
+{
+    _size = 0;
+    [self clearPatriciaNode:self.root];
+}
+
+
 @end
 
-
+/*
 # pragma mark - Test Part:
 
 @interface StrIndexable : NSObject<StringIndexable>
@@ -587,7 +638,7 @@ NSString* _name;
 }
 
 @end;
-/**
+
 
 void testPatricia(){
     StrIndexable* idx = [[StrIndexable alloc] initWithName:@"x"];

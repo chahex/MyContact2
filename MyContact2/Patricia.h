@@ -33,6 +33,9 @@ static BOOL const __ignoreCase = YES;
 #endif
 
 @interface Patricia : NSObject
+{
+    NSInteger _size;
+}
 
 @property NSInteger size;
 
@@ -57,7 +60,7 @@ withIndexSelector:(SEL)indexSel;
 
 // iterate through the entire tree to remove a value,
 // remove the node only when isEqual returns true.
--(NSObject*)removeValue:(NSObject*)value;
+// -(NSObject*)removeValue:(NSObject*)value;
 
 -(NSArray*) suggestValuesForIndex:(NSString*)index;
 
@@ -67,5 +70,8 @@ withIndexSelector:(SEL)indexSel;
 // seems like getters are define as non argument methods
 // -(BOOL)testReturnOfDotOper; 
 // -(void)testNoReturn;
+
+// clear the tree.
+-(void)clear;
 
 @end

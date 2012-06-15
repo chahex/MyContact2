@@ -54,7 +54,6 @@ UISearchBar* _mySearchBar;
 
     // UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     // self.navigationItem.rightBarButtonItem = addButton;
-    
 }
 
 - (void)viewDidUnload
@@ -326,7 +325,8 @@ UISearchBar* _mySearchBar;
 {
     // update Patricia
     [self prepareContactPatricia];
-    
+    self.searchResults = [self.contactPatricia suggestValuesForIndex:self.searchBar.text];
+    [self.searchDisplayController.searchResultsTableView reloadData];
     UITableView *tableView = self.tableView;
     
     switch(type) {
@@ -404,6 +404,7 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
 
 -(void)prepareContactPatricia
 {
+    [self.contactPatricia clear];
     SEL sels[] =  {@selector(displayName),@selector(firstName),@selector(lastName),@selector(company),@selector(phone),@selector(email),nil};
     for(NSInteger i = 0;sels[++i]!=nil;){
         [self.contactPatricia addValues:[__fetchedResultsController fetchedObjects] withIndexSelector:sels[i]];

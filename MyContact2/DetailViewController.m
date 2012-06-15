@@ -15,6 +15,7 @@
 
 @implementation DetailViewController
 
+@synthesize navigationBar = _navigationBar;
 @synthesize detailItem = _detailItem;
 @synthesize firstNameField = _firstNameField;
 @synthesize lastNameField = _lastNameField;
@@ -56,6 +57,7 @@
 
 - (void)viewDidLoad
 {
+
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
@@ -68,6 +70,7 @@
     [self setCompanyField:nil];
     [self setPhoneField:nil];
     [self setEmailField:nil];
+    [self setNavigationBar:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
