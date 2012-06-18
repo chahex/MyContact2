@@ -14,6 +14,8 @@
 
 static  NSString* const SORT_BY = @"lastName";
 
+static BOOL const CASE_INSENSITIVE = YES;
+
 #endif
 
 
