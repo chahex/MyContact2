@@ -11,8 +11,9 @@
 #import "Contact.h"
 
 @interface MasterViewController ()
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (void)prepareContactPatricia;
+- (void) configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void) prepareContactPatricia;
+- (void) prepareSectionInfos;
 @end
 
 @implementation MasterViewController
@@ -27,10 +28,12 @@ UISearchBar* _mySearchBar;
 @synthesize searchBar = _mySearchBar;
 
 @synthesize contactPatricia = _contactPatricia;
+@synthesize searchResults = _searchResults;
+@synthesize sectionInfos = _sectionInfos;
 
 @synthesize fetchedResultsController = __fetchedResultsController;
 @synthesize managedObjectContext = __managedObjectContext;
-@synthesize searchResults = _searchResults;
+
 
 - (void)awakeFromNib
 {
@@ -55,6 +58,9 @@ UISearchBar* _mySearchBar;
 
     // UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     // self.navigationItem.rightBarButtonItem = addButton;
+    
+    // prepare the section info
+    [self prepareSectionInfos];
 }
 
 - (void)viewDidUnload
@@ -65,6 +71,10 @@ UISearchBar* _mySearchBar;
     [self setContactPatricia:nil];
     [self setFetchedResultsController:nil];
     [self setManagedObjectContext:nil];
+    [self setSearchResults:nil];
+    [self setContactPatricia:nil];
+    [self setSectionInfos:nil];
+    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -125,18 +135,22 @@ UISearchBar* _mySearchBar;
 {
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-    if(cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        // ???
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
-    
     if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
     {
+        if(cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+            // ???
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
         cell.textLabel.text = ((Contact*)[self.searchResults objectAtIndex:indexPath.row]).displayName;
     }else{
+        if(cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
+            // ???
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
         [self configureCell:cell atIndexPath:indexPath];
     }
     return cell;
@@ -197,13 +211,63 @@ UISearchBar* _mySearchBar;
     return [NSArray arrayWithArray:marr];
 }
 
+-(NSInteger) findActualIndexForTitle:(NSString*)indexTitle inIndexTitles:(NSArray*)indexTitles
+{
+    if([indexTitles containsObject:indexTitle])
+        return [indexTitles indexOfObject:indexTitle];
+    // assume the index title only effective for the first character
+    // assume the index title are upper case only
+    // assume the index titles are magnifier, A->Z, #
+    char input = [indexTitle characterAtIndex:0];
+    if(input == '#')
+    {
+        input = 'Z';
+    }
+    char ch = input;
+    NSInteger actualIndex = NSNotFound;
+    while(ch>='A')
+    {
+        NSString* str = [NSString stringWithFormat:@"%c",ch];
+        actualIndex = [indexTitles indexOfObject:str];
+        if(!(actualIndex==NSNotFound))
+        {
+            return actualIndex;
+        }
+        --ch;
+    }
+    ch = input;
+    while(ch<='Z')
+    {
+        NSString* str = [NSString stringWithFormat:@"%c",ch];
+        actualIndex = [indexTitles indexOfObject:str];
+        if(!(actualIndex==NSNotFound))
+        {
+            return actualIndex;
+        }
+        ++ch;
+    }
+    return NSNotFound;
+}
 
+
+// this method is used to pair section index with section header.
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
     if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
     {
         return 0;
     }    
-    return [self.fetchedResultsController sectionForSectionIndexTitle:title atIndex:index];
+    NSArray* indexTitles = [self.fetchedResultsController sectionIndexTitles];
+    NSInteger actualIndex = [indexTitles indexOfObject:title];
+    if(![indexTitles containsObject:title]&&index==0){
+        // index == 0 is the index for the search bar
+        [tableView setContentOffset:CGPointZero animated:NO];
+        return NSNotFound;
+    }
+    // else, the list either contains or not contains the title given
+    actualIndex = [self findActualIndexForTitle:title inIndexTitles:indexTitles];
+    if(actualIndex == NSNotFound)
+        return NSNotFound;
+    return [self.fetchedResultsController sectionForSectionIndexTitle:[indexTitles objectAtIndex:actualIndex] atIndex:actualIndex];
 }
 
 // section header title
@@ -250,7 +314,6 @@ UISearchBar* _mySearchBar;
         else if([superTableView isEqual:self.searchDisplayController.searchResultsTableView]){
             selectedObject = [self.searchResults objectAtIndex:indexPath.row];
         }
-        
         [[segue destinationViewController] setDetailItem:selectedObject];
     }
 }
@@ -404,7 +467,7 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
     return YES;
 }
 
-#pragma mark - Contact Patricia Operations
+#pragma mark - Contact Patricia and Section Info Operations
 
 -(Patricia*)contactPatricia
 {
@@ -422,6 +485,11 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
     for(NSInteger i = 0;sels[++i]!=nil;){
         [self.contactPatricia addValues:[__fetchedResultsController fetchedObjects] withIndexSelector:sels[i]];
     }
+}
+
+-(void) prepareSectionInfos
+{
+    
 }
 
 
