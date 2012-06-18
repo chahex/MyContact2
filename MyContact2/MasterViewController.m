@@ -48,6 +48,7 @@ UISearchBar* _mySearchBar;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 	// Do any additional setup after loading the view, typically from a nib.
     // Set up the edit and add buttons.
     // self.navigationItem.leftBarButtonItem = self.editButtonItem;
@@ -185,7 +186,15 @@ UISearchBar* _mySearchBar;
     {
         return nil;
     }
-    return [self.fetchedResultsController sectionIndexTitles];
+    NSMutableArray* marr = [NSMutableArray arrayWithCapacity:27];
+    [marr addObject:UITableViewIndexSearch];
+    for(char ch = 'A';ch<='Z';ch++)
+    {
+        [marr addObject:[NSString stringWithFormat:@"%c",ch]];
+    }
+    [marr addObject:[NSString stringWithFormat:@"%c",'#']];
+    // return [self.fetchedResultsController sectionIndexTitles];
+    return [NSArray arrayWithArray:marr];
 }
 
 
@@ -212,8 +221,12 @@ UISearchBar* _mySearchBar;
 {
     if([tableView isEqual:self.searchDisplayController.searchResultsTableView])
     {
+
+        UIBarButtonItem* bkBtn = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:nil action:nil];
+        self.navigationItem.backBarButtonItem = bkBtn;
         UITableViewCell* sender = [tableView cellForRowAtIndexPath:indexPath];
         [self performSegueWithIdentifier:@"showDetail" sender:sender];
+        bkBtn = nil;
     }
     
     // although no branch for the master's tableview, it is still able to
