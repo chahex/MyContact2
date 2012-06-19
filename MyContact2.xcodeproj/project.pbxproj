@@ -26,6 +26,7 @@
 		D60060F0157D9F4B00547E26 /* NewContactViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D60060EE157D9F4B00547E26 /* NewContactViewController.m */; };
 		D60061051580564300547E26 /* MyContact2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D60061031580564300547E26 /* MyContact2.xcdatamodeld */; };
 		E710460615878D210080FAF3 /* Patricia.m in Sources */ = {isa = PBXBuildFile; fileRef = E710460515878D210080FAF3 /* Patricia.m */; };
+		E7105D83158FA0B000F959CB /* PatriciaFetchedResultController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7105D82158FA0B000F959CB /* PatriciaFetchedResultController.m */; };
 		E73616E815823573007754D6 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = E73616E715823573007754D6 /* Contact.m */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,8 @@
 		D60061041580564300547E26 /* MyContact2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyContact2.xcdatamodel; sourceTree = "<group>"; };
 		E710460415878D210080FAF3 /* Patricia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Patricia.h; sourceTree = "<group>"; };
 		E710460515878D210080FAF3 /* Patricia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Patricia.m; sourceTree = "<group>"; };
+		E7105D81158FA0B000F959CB /* PatriciaFetchedResultController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatriciaFetchedResultController.h; sourceTree = "<group>"; };
+		E7105D82158FA0B000F959CB /* PatriciaFetchedResultController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatriciaFetchedResultController.m; sourceTree = "<group>"; };
 		E73616E615823573007754D6 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		E73616E715823573007754D6 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Contact.m; sourceTree = "<group>"; };
 		E7A26A0315868385006AA23B /* StringIndexable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringIndexable.h; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 				D60060ED157D9F4A00547E26 /* NewContactViewController.h */,
 				D60060EE157D9F4B00547E26 /* NewContactViewController.m */,
 				E7A26A021586836A006AA23B /* TrieTest */,
+				E7105D81158FA0B000F959CB /* PatriciaFetchedResultController.h */,
+				E7105D82158FA0B000F959CB /* PatriciaFetchedResultController.m */,
 			);
 			path = MyContact2;
 			sourceTree = "<group>";
@@ -305,6 +310,7 @@
 				D60061051580564300547E26 /* MyContact2.xcdatamodeld in Sources */,
 				E73616E815823573007754D6 /* Contact.m in Sources */,
 				E710460615878D210080FAF3 /* Patricia.m in Sources */,
+				E7105D83158FA0B000F959CB /* PatriciaFetchedResultController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

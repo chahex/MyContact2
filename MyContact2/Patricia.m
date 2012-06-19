@@ -10,6 +10,56 @@
 #import "Patricia.h"
 #import "StringIndexable.h"
 
+#pragma mark - SectionInfo protocol
+
+@interface PatriciaFetchedResultsSectionInfo : NSObject<NSFetchedResultsSectionInfo>
+
+{
+    NSString* _name;
+    NSString* _indexTitle;
+    NSUInteger _numberOfObjects;
+    NSArray* _objects;
+}
+
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSString *indexTitle;
+@property (nonatomic, readonly) NSUInteger numberOfObjects;
+@property (nonatomic, readwrite) NSArray *objects;
+@end
+
+@implementation PatriciaFetchedResultsSectionInfo
+@synthesize name = _name;
+@synthesize indexTitle = _indexTitle;
+@synthesize numberOfObjects = _numberOfObjects;
+@synthesize objects =_objects;
+
+-(id) initWithName:(NSString*) name
+        andObjects:(NSArray*) objects
+{
+    if(self =[super init])
+    {
+        _name = name;
+        _indexTitle = name;
+        _objects = objects;
+        _numberOfObjects = [objects count];
+    }
+    return self;
+}
+
+-(NSString*) description
+{
+    return [NSString stringWithFormat:@"PFSectionInfo:[%@,%@]",_name,_objects];
+}
+
+-(void)setObjects:(NSArray*)objects
+{
+    _objects = objects;
+    _numberOfObjects = [objects count];
+}
+
+@end
+
+
 #pragma mark - Nodes definition
 #pragma mark - BaseNode definition
 
@@ -47,14 +97,21 @@
 {
     if(!node)
     {
-        [self.baseDict setObject:nil forKey:[NSNumber numberWithInt:key]];
+        [self.baseDict setObject:[NSNull null] forKey:[NSNumber numberWithInt:key]];
+    }else{
+        [self.baseDict setObject:node forKey:[NSNumber numberWithInt:key]];
     }
-    [self.baseDict setObject:node forKey:[NSNumber numberWithInt:key]];
 }
 
 -(BaseNode*) nodeForKey:(NSInteger)key
 {
-    return [self.baseDict objectForKey:[NSNumber numberWithInt: key]];
+    BaseNode* node = [self.baseDict objectForKey:[NSNumber numberWithInt: key]];
+    if([node isEqual:[NSNull null]])
+    {
+        node = nil;
+    }
+    return node;
+       
 }
 
 -(NSString*) description
@@ -131,10 +188,10 @@
 
 -(NSInteger)getIndexKeyVal:(char)key;
 
--(void) findAllValuesAtPNode:(PatriciaNode*) root
+-(void) findAllValuesAtNode:(BaseNode*) root
                   addToArray:(NSMutableArray*) arr;
 
--(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer
+-(BOOL)insertLeafNodeAtNode:(LeafNode*)oldLeafNode
                        withNewLeaf:(LeafNode*) newLeafNode;
 
 -(void)addUniqueToArray:(NSMutableArray*)arr withValue:(NSObject*)value;
@@ -157,6 +214,16 @@
 -(void)dealloc
 {
     _root = nil;
+}
+
+-(id) init
+{
+    if(self = [super init])
+    {
+        _root = nil;
+        _size = 0;
+    }
+    return self;
 }
 
 -(PatriciaNode*)root
@@ -214,16 +281,13 @@ withIndexString:(NSString*) indexString
         // not supported case sensitivie.
         abort();
     }
-    NSString* index = [indexString lowercaseString];
+    NSString* index = [indexString uppercaseString];
     NSInteger newIndexLength = [index length];
     
     if(!index) {        return;    }
     
     LeafNode* newLeaf = [[LeafNode alloc]initWithValue:value andValueId:valueId andIndexString:indexString];
     PatriciaNode *p = self.root;
-    
-    // if no exceptions, the value is due to be inserted.
-    ++self.size;
     
     for(NSInteger i = 0;;)
     {
@@ -233,8 +297,10 @@ withIndexString:(NSString*) indexString
         {
             LeafNode* oldLeaf = (LeafNode*)[p nodeForKey:__sharpKey];
             // the oldLeaf pointer's value may be changed if it is nil.
-            [self insertLeafNodeAtNodePointer:&oldLeaf withNewLeaf:newLeaf];
+            [self insertLeafNodeAtNode:oldLeaf withNewLeaf:newLeaf];
             [p setNodeAtKey:__sharpKey withNode:oldLeaf];
+            // if no exceptions, the value is due to be inserted.
+            ++self.size;
             return;
         }
 
@@ -259,6 +325,8 @@ withIndexString:(NSString*) indexString
         if(next == Nil)
         {
             [p setNodeAtKey:newKey withNode:newLeaf];
+            // if no exceptions, the value is due to be inserted.
+            ++self.size;
             return;
         }
         
@@ -273,14 +341,17 @@ withIndexString:(NSString*) indexString
         // when next node is a leafNode
         LeafNode* oldLeaf = (LeafNode*) next;
         // if indexes not duplicated
-        NSString* oldIndex = [oldLeaf.indexString lowercaseString];
+        NSString* oldIndex = [oldLeaf.indexString uppercaseString];
         NSInteger oldIndexLength = [oldIndex length];
         NSInteger oldKey = 0;
         // duplicated indexes
         // NSLog(@"oldi:%@,newi:%@",oldIndex,index);
         if([oldIndex isEqualToString:index])
         {
-            [self insertLeafNodeAtNodePointer:&oldLeaf withNewLeaf:newLeaf];
+            if([self insertLeafNodeAtNode:oldLeaf withNewLeaf:newLeaf])
+            {
+                ++self.size;
+            }
             return;
         }
         
@@ -381,33 +452,26 @@ withIndexString:(NSString*) indexString
         
         [p setNodeAtKey:newKey withNode:newLeaf];
         [p setNodeAtKey:oldKey withNode:oldLeaf];
+        // if no exceptions, the value is due to be inserted.
+        ++self.size;
         return;
     }
     // set end of word marker to p
 }
 
-// side effect: the pointer passed in may be pointed to a new LeafNode if it is originally Nil..
-// if it is not Nil, the newLeafNode will be attached to the siblings.
-// if the value in the old leaf is equal to the value in the new leaf, simpley return without adding it.
-
--(void)insertLeafNodeAtNodePointer:(LeafNode**)oldLeafPointer 
+-(BOOL)insertLeafNodeAtNode:(LeafNode*)oldLeafNode 
                        withNewLeaf:(LeafNode*) newLeafNode
 {
 
-    LeafNode* oldLeafNode = *oldLeafPointer;
     if([oldLeafNode.value isEqual:newLeafNode.value]){
-        return;
+        return NO;
     }
-    if(oldLeafNode == Nil)
-    {
-        *oldLeafPointer = newLeafNode;
-        return;
-    }
+    
     // here strictly assume no loop, and no siblings means nil.
     while(oldLeafNode.nextSibling!=Nil)
         oldLeafNode = oldLeafNode.nextSibling;
     oldLeafNode.nextSibling = newLeafNode;
-    return;
+    return YES;
 }
 
 /**
@@ -420,8 +484,8 @@ withIndexString:(NSString*) indexString
 {
 
     // word character
-    if(key<='z' && key>='a')
-        return key - 'a' + 1 + 10;
+    if(key<='Z' && key>='A')
+        return key - 'A' + 1 + 10;
     // number character
     if(key<='9' && key>='0')
         return key - '0' + 1;
@@ -468,7 +532,7 @@ withIndexString:(NSString*) indexString
     // lower case not supported.
     if(!__ignoreCase)
         abort();
-    index = [index lowercaseString];
+    index = [index uppercaseString];
     NSInteger indexLength = [index length];
     NSInteger curOffset = offset;
     NSInteger curKey = 0;
@@ -498,7 +562,7 @@ withIndexString:(NSString*) indexString
                 }
                 if([curNode isKindOfClass:[PatriciaNode class]])
                 {
-                    [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
+                    [self findAllValuesAtNode:curNode addToArray:arr];
                     break;
                 }
             }
@@ -528,30 +592,27 @@ withIndexString:(NSString*) indexString
 
 /**The range of this */
 
--(void) findAllValuesAtPNode:(PatriciaNode*) root
+-(void) findAllValuesAtNode:(BaseNode*) root
                  addToArray:(NSMutableArray*) arr
 {
     if(!root)
         return;
-    
-    NSInteger start = __keyLowerBound;
-    NSInteger end = __keyUpperBound;
-    
-    for(NSInteger i = start;i<=end;i++)
+    if([root isKindOfClass:[LeafNode class]])
     {
-        BaseNode* curNode = [root nodeForKey:i];
-		if(!curNode)
-			continue;
-        if([curNode isKindOfClass:[LeafNode class]])
+        // when it is a leaf node.
+        LeafNode* isLeafCurNode = (LeafNode*)root;
+        do{
+            // NSLog(@"%@",isLeafCurNode);
+            [self addUniqueToArray:arr withValue:isLeafCurNode.value];
+        }while((isLeafCurNode = isLeafCurNode.nextSibling));
+    }else if([root isKindOfClass:[PatriciaNode class]]){
+        // when it is a patricia node 
+        NSInteger start = __keyLowerBound;
+        NSInteger end = __keyUpperBound;
+        PatriciaNode* isPatriciaNode = (PatriciaNode*)root;
+        for(NSInteger i = start;i<=end;i++)
         {
-            // when it is a leaf node.
-            LeafNode* isLeafCurNode = (LeafNode*)curNode;
-            do{
-                [self addUniqueToArray:arr withValue:isLeafCurNode.value];
-            }while((isLeafCurNode = isLeafCurNode.nextSibling)!=Nil);
-        }else{
-            // when it is a patricia node 
-            [self findAllValuesAtPNode:(PatriciaNode*)curNode addToArray:arr];
+            [self findAllValuesAtNode:[isPatriciaNode nodeForKey:i] addToArray:arr];
         }
     }
 }
@@ -606,10 +667,72 @@ withIndexString:(NSString*) indexString
     [self clearPatriciaNode:self.root];
 }
 
+-(NSArray*) findAllValues
+{
+    NSMutableArray* marr = [[NSMutableArray alloc] initWithCapacity:self.size];
+    [self findAllValuesAtNode:self.root addToArray:marr];
+    return [NSArray arrayWithArray:marr];
+}
+
+
+// the section header is the initial of the index
+// this method is designed to work only with displayNameInitial
+-(NSArray*) findAllValuesWithResultsSectionInfos:(NSMutableArray **)sectionInfos andHeaderTitles:(NSMutableArray **)headerTitles
+{
+    NSInteger begin = __keyLowerBound;
+    NSInteger end = __keyUpperBound;
+    NSMutableArray* results = [NSMutableArray arrayWithCapacity:_size];
+    NSMutableArray* sectInfos = [NSMutableArray arrayWithCapacity:27];
+    NSMutableArray* hdrTitls = [NSMutableArray arrayWithCapacity:27];
+    //used to store the values with the sharp key
+    NSMutableArray* sharpObjects = [NSMutableArray arrayWithCapacity:10];
+
+    for(NSInteger i = begin ; i <= end ; i++)
+    {
+        BaseNode* childNode = [self.root nodeForKey:i];
+        if(childNode==nil)
+            continue;
+        
+        char ch = 0;
+        NSMutableArray* objects;
+        PatriciaFetchedResultsSectionInfo *sectInfo;
+
+        
+        if(i<11||i>=37)
+        {
+            ch = 'Z'+1;
+            objects = sharpObjects;
+            [self findAllValuesAtNode:childNode addToArray:objects];
+            
+        }else{
+            ch = i-11+'A';
+            sectInfo = [[PatriciaFetchedResultsSectionInfo alloc] initWithName:[NSString stringWithFormat:@"%c",ch] andObjects:nil];
+            objects = [NSMutableArray arrayWithCapacity:10];
+            [self findAllValuesAtNode:childNode addToArray:objects];
+            if([objects count]){
+                [hdrTitls addObject:[NSString stringWithFormat:@"%c",ch]];
+            }
+            [results addObjectsFromArray:objects];
+            sectInfo.objects = [NSArray arrayWithArray:objects];
+            [sectInfos addObject:sectInfo];
+        }   
+    }
+    if([sharpObjects count]){
+        [results addObjectsFromArray:sharpObjects];
+        PatriciaFetchedResultsSectionInfo* sharpSectionInfo = [[PatriciaFetchedResultsSectionInfo alloc] initWithName:@"#" andObjects:[NSArray arrayWithArray:sharpObjects]];
+        [sectInfos addObject:sharpSectionInfo];
+        [hdrTitls addObject:@"#"];
+    }
+    
+    *sectionInfos = sectInfos;
+    *headerTitles = hdrTitls;
+    return [NSArray arrayWithArray:results];
+}
 
 @end
 
 /*
+
 # pragma mark - Test Part:
 
 @interface StrIndexable : NSObject<StringIndexable>
@@ -658,8 +781,16 @@ void testPatricia(){
         [p addValue:idx withIndexSelector:@selector(indexString) andValueId:0];
     }
     NSLog(@"%@",p);
-	NSMutableArray* arr2 = [p suggestValuesForIndex:@"xi--"];
+	NSArray* arr2 = [p suggestValuesForIndex:@"xi--"];
     NSLog(@"%@",arr2);
+    // size may not be same with the 
+    NSLog(@"%@",p.findAllValues);
+    NSLog(@"%ld:%d:%lu",p.size,p.findAllValues.count==p.size,[p.findAllValues count]);
+    NSMutableArray* infoArr = nil;
+    NSArray* results = [p findAllValuesWithResultsSectionInfos:&infoArr];
+    NSLog(@"results again:%@",results);
+    NSLog(@"infos:%@",infoArr);
+
 }
 
 int main(int argc, char *argv[]) { testPatricia();}

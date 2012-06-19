@@ -9,11 +9,11 @@
 #import "MasterViewController.h"
 #import "DetailViewController.h"
 #import "Contact.h"
+#import "PatriciaFetchedResultController.h"
 
 @interface MasterViewController ()
 - (void) configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void) prepareContactPatricia;
-- (void) prepareSectionInfos;
 @end
 
 @implementation MasterViewController
@@ -29,7 +29,6 @@ UISearchBar* _mySearchBar;
 
 @synthesize contactPatricia = _contactPatricia;
 @synthesize searchResults = _searchResults;
-@synthesize sectionInfos = _sectionInfos;
 
 @synthesize fetchedResultsController = __fetchedResultsController;
 @synthesize managedObjectContext = __managedObjectContext;
@@ -58,9 +57,7 @@ UISearchBar* _mySearchBar;
 
     // UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     // self.navigationItem.rightBarButtonItem = addButton;
-    
-    // prepare the section info
-    [self prepareSectionInfos];
+
 }
 
 - (void)viewDidUnload
@@ -73,7 +70,6 @@ UISearchBar* _mySearchBar;
     [self setManagedObjectContext:nil];
     [self setSearchResults:nil];
     [self setContactPatricia:nil];
-    [self setSectionInfos:nil];
     
     [super viewDidUnload];
     // Release any retained subviews of the main view.
@@ -112,6 +108,7 @@ UISearchBar* _mySearchBar;
     if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
         return 1;
     }
+    // NSLog(@"%d",[[self.fetchedResultsController sections] count]);
     return [[self.fetchedResultsController sections] count];
 }
 
@@ -125,6 +122,7 @@ UISearchBar* _mySearchBar;
     }else {
         id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
         count = [sectionInfo numberOfObjects];
+        // NSLog(@"%@",[sectionInfo numberOfObjects]);
     }
     return count;
 }
@@ -207,7 +205,6 @@ UISearchBar* _mySearchBar;
         [marr addObject:[NSString stringWithFormat:@"%c",ch]];
     }
     [marr addObject:[NSString stringWithFormat:@"%c",'#']];
-    // return [self.fetchedResultsController sectionIndexTitles];
     return [NSArray arrayWithArray:marr];
 }
 
@@ -303,9 +300,10 @@ UISearchBar* _mySearchBar;
 {
     //NSLog(@"segueSender:%@",[sender class]);
     UITableViewCell* cell = (UITableViewCell*)sender;
-    UITableView* superTableView = (UITableView*)[cell superview];
+    // 
     //NSLog(@"superview:%@,equalto:%d",[cell superview],[[cell superview] isEqual:self.tableView]);
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
+        UITableView* superTableView = (UITableView*)[cell superview];
         NSIndexPath *indexPath = [superTableView indexPathForSelectedRow];
         NSManagedObject *selectedObject = nil;
         if([superTableView isEqual:self.tableView]){
@@ -347,7 +345,7 @@ UISearchBar* _mySearchBar;
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"displayNameInitial" cacheName:@"Master"];
+    NSFetchedResultsController *aFetchedResultsController = [[PatriciaFetchedResultController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"displayNameInitial" cacheName:@"Master"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
@@ -452,6 +450,7 @@ UISearchBar* _mySearchBar;
 - (void)insertNewObject{/**<context, entity->name>:managedObj,save*/}
 
 #pragma mark - UISearchDisplayController delegate methods
+
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller 
 shouldReloadTableForSearchString:(NSString *)searchString
 {
@@ -485,11 +484,6 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
     for(NSInteger i = 0;sels[++i]!=nil;){
         [self.contactPatricia addValues:[__fetchedResultsController fetchedObjects] withIndexSelector:sels[i]];
     }
-}
-
--(void) prepareSectionInfos
-{
-    
 }
 
 

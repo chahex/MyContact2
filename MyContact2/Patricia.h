@@ -74,4 +74,9 @@ withIndexSelector:(SEL)indexSel;
 // clear the tree.
 -(void)clear;
 
+-(NSArray*)findAllValues;
+
+-(NSArray*)findAllValuesWithResultsSectionInfos:(NSMutableArray**)sectionInfos 
+                                andHeaderTitles:(NSMutableArray**) headerTitles;
+
 @end

@@ -21,7 +21,6 @@ static NSInteger const SECTION_INFO_SIZE = 27;
 
 @property (strong, nonatomic) Patricia* contactPatricia;
 @property (strong, nonatomic) NSArray* searchResults;
-@property (strong, nonatomic) NSArray* sectionInfos;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
