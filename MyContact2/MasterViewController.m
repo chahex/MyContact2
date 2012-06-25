@@ -301,6 +301,8 @@ UISearchBar* _mySearchBar;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    if([sender isKindOfClass:[UIBarButtonItem class]])
+        return;
     //NSLog(@"segueSender:%@",[sender class]);
     UITableViewCell* cell = (UITableViewCell*)sender;
     UITableView* superTableView = (UITableView*)[cell superview];
