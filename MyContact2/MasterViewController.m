@@ -397,6 +397,16 @@ UISearchBar* _mySearchBar;
        atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath
 {
+    /*
+    [NSFetchedResultsController deleteCacheWithName:@"Master"];
+    NSError* error;
+    [self.fetchedResultsController performFetch:&error];
+    if(error)
+    {
+        NSLog(@"error refetching:%@",[error description]);
+        abort();
+    }
+     */
     // update Patricia
     [self prepareContactPatricia];
     self.searchResults = [self.contactPatricia suggestValuesForIndex:self.searchBar.text];
