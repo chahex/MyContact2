@@ -327,6 +327,7 @@ UISearchBar* _mySearchBar;
     
     // Set up the fetched results controller.
     // Create the fetch request for the entity.
+    // self.managedObjectContext 
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Contact" inManagedObjectContext:self.managedObjectContext];
@@ -338,7 +339,13 @@ UISearchBar* _mySearchBar;
     // Debug: log the entity description
     // NSLog(@"EntityDesc:%@",entity);
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:SORT_BY ascending:YES];
+    NSSortDescriptor *sortDescriptor = nil;
+    if(CASE_INSENSITIVE)
+    {
+        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:SORT_BY ascending:YES selector:@selector(caseInsensitiveCompare:)];
+    }else
+        sortDescriptor = [[NSSortDescriptor alloc] initWithKey:SORT_BY ascending:YES selector:@selector(caseInsensitiveCompare:)];
+    
     NSArray *sortDescriptors = [NSArray arrayWithObjects:sortDescriptor, nil];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
