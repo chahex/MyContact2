@@ -69,6 +69,7 @@ static NSString* const SHARP = @"#";
     }
     //NSLog(@"Sort by %@",SORT_BY);
     //NSLog(@"Result:%@",result);
+    //NSLog(@"DisplayName:%@",result);
     [self didAccessValueForKey:@"displayName"];
     return result;
     // else
@@ -91,8 +92,8 @@ static NSString* const SHARP = @"#";
             result = SHARP;
         }
     }
-    // NSLog(@"%@",result);
     [self didAccessValueForKey:@"displayNameInitial"];
+    NSLog(@"displayNameInit:%@",result);
     return result;
 }
 
